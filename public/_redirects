@@ -1,0 +1,5 @@
+# Cloudflare Pages redirects. Format: /from /to 301
+# Short marketing URLs
+/book-now /book/ 301
+/es /es/ 301
+/de /de/ 301

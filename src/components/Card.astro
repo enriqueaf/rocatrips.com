@@ -1,0 +1,20 @@
+---
+import type { AnyEntry } from '../lib/routes';
+import { levelLabels, ui, type Locale } from '../i18n';
+
+const { entry } = Astro.props as { entry: AnyEntry };
+const d = entry.data;
+const lang = d.lang as Locale;
+const text = 'summary' in d ? d.summary : d.description;
+---
+
+<li>
+  <h3><a href={d.path}>{d.navLabel ?? d.h1 ?? d.title}</a></h3>
+  {entry.collection === 'experiences' && (
+    <p class="crumbs">
+      {levelLabels[lang][entry.data.level]} · {entry.data.duration}
+      {entry.data.priceFrom != null && <> · {ui[lang].from} €{entry.data.priceFrom}</>}
+    </p>
+  )}
+  <p>{text}</p>
+</li>

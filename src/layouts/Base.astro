@@ -1,0 +1,113 @@
+---
+import { site } from '../site.config';
+import { defaultLocale, localeNames, mainNav, footerNav, ui, type Locale } from '../i18n';
+import { byKey, translations, breadcrumbs, type AnyEntry } from '../lib/routes';
+import { organization, breadcrumbList } from '../lib/schema';
+import { mdPath } from '../lib/markdown';
+
+interface Props {
+  entry: AnyEntry;
+  bookUrl: string;
+  schema?: object[];
+}
+const { entry, bookUrl, schema = [] } = Astro.props;
+const d = entry.data;
+const lang = d.lang as Locale;
+const t = ui[lang];
+const canonical = new URL(d.path, site.url).toString();
+
+const alternates = await translations(entry);
+const xDefault = alternates.find((a) => a.data.lang === defaultLocale);
+const trail = await breadcrumbs(entry);
+
+const resolveNav = async (keys: readonly string[]) =>
+  (await Promise.all(keys.map((k) => byKey(k, lang)))).filter((e): e is AnyEntry => !!e);
+const nav = await resolveNav(mainNav);
+const footer = await resolveNav(footerNav);
+const homePath = lang === defaultLocale ? '/' : `/${lang}/`;
+
+const jsonLd = [organization(), ...(trail.length > 1 ? [breadcrumbList(trail)] : []), ...schema];
+---
+
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{d.title}</title>
+    <meta name="description" content={d.description} />
+    <link rel="canonical" href={canonical} />
+    {alternates.map((a) => <link rel="alternate" hreflang={a.data.lang} href={new URL(a.data.path, site.url).toString()} />)}
+    {xDefault && <link rel="alternate" hreflang="x-default" href={new URL(xDefault.data.path, site.url).toString()} />}
+    {d.draft ? <meta name="robots" content="noindex" /> : <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large" />}
+    {/* AI-readable versions of this page and of the whole site */}
+    <link rel="alternate" type="text/markdown" href={mdPath(d.path)} title="Markdown version" />
+    <link rel="help" type="text/plain" href="/llms.txt" title="llms.txt" />
+
+    <meta property="og:type" content={entry.collection === 'guides' ? 'article' : 'website'} />
+    <meta property="og:site_name" content={site.name} />
+    <meta property="og:title" content={d.h1 ?? d.title} />
+    <meta property="og:description" content={d.description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:locale" content={lang} />
+    {/* TODO: og:image per page once photos arrive (1200x630) */}
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    {jsonLd.map((j) => <script type="application/ld+json" set:html={JSON.stringify(j)} />)}
+
+    <style is:global>
+      /* Deliberately minimal — real design comes later. */
+      :root { --fg: #1d1d1b; --muted: #6b6b66; --bg: #fbfaf7; --accent: #b4461f; --line: #e4e1da; }
+      * { box-sizing: border-box; }
+      body { margin: 0; font: 17px/1.6 system-ui, sans-serif; color: var(--fg); background: var(--bg); }
+      a { color: var(--accent); }
+      header, main, footer { max-width: 960px; margin: 0 auto; padding: 16px; }
+      header nav, footer nav { display: flex; flex-wrap: wrap; gap: 6px 18px; align-items: center; }
+      header .brand { font-weight: 700; margin-right: auto; text-decoration: none; color: var(--fg); }
+      .btn { display: inline-block; background: var(--accent); color: #fff; padding: 10px 18px; border-radius: 6px; text-decoration: none; font-weight: 600; }
+      .crumbs { font-size: 14px; color: var(--muted); }
+      .crumbs a { color: var(--muted); }
+      .facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 8px 16px; padding: 16px; border: 1px solid var(--line); border-radius: 8px; }
+      .facts dt { font-size: 13px; color: var(--muted); }
+      .facts dd { margin: 0; font-weight: 600; }
+      .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; padding: 0; list-style: none; }
+      .cards li { border: 1px solid var(--line); border-radius: 8px; padding: 16px; }
+      .summary { font-size: 19px; }
+      footer { border-top: 1px solid var(--line); font-size: 14px; color: var(--muted); }
+      .todo { background: #fff4cc; padding: 2px 6px; border-radius: 4px; }
+    </style>
+  </head>
+  <body>
+    <header>
+      <nav aria-label="Main">
+        <a class="brand" href={homePath}>{site.name}</a>
+        {nav.map((n) => <a href={n.data.path}>{n.data.navLabel ?? n.data.title}</a>)}
+        <a class="btn" href={bookUrl} rel="noopener" target="_blank">{t.book}</a>
+      </nav>
+      {alternates.length > 1 && (
+        <nav aria-label="Language">
+          {alternates.map((a) =>
+            a.data.lang === lang ? <strong>{localeNames[a.data.lang]}</strong> : <a href={a.data.path} hreflang={a.data.lang}>{localeNames[a.data.lang]}</a>,
+          )}
+        </nav>
+      )}
+    </header>
+
+    <main>
+      {trail.length > 1 && (
+        <nav class="crumbs" aria-label="Breadcrumb">
+          {trail.map((c, i) => (i < trail.length - 1 ? <><a href={c.path}>{c.name}</a> › </> : <span>{c.name}</span>))}
+        </nav>
+      )}
+      <slot />
+      <p class="crumbs">{t.updated}: <time datetime={d.updated.toISOString().slice(0, 10)}>{d.updated.toISOString().slice(0, 10)}</time></p>
+    </main>
+
+    <footer>
+      <nav aria-label="Footer">{footer.map((n) => <a href={n.data.path}>{n.data.navLabel ?? n.data.title}</a>)}</nav>
+      <p>© {new Date().getFullYear()} {site.name} · {site.tagline} · {site.address.locality}, Tenerife</p>
+    </footer>
+  </body>
+</html>

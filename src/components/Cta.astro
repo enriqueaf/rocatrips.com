@@ -1,0 +1,28 @@
+---
+// Sitewide "climb with Rocatrips" call to action. Shown at the end of every
+// page (except booking/legal), so every resource page ends with the CTA.
+import { ui, type Locale } from '../i18n';
+import { byKey } from '../lib/routes';
+
+interface Props { lang: Locale; bookUrl: string; }
+const { lang, bookUrl } = Astro.props;
+const t = ui[lang];
+const experiences = await byKey('experiences', lang);
+const contact = await byKey('contact', lang);
+---
+
+<aside class="cta" aria-label={t.ctaTitle}>
+  <h2>{t.ctaTitle}</h2>
+  <p>{t.ctaText}</p>
+  <p>
+    <a class="btn" href={bookUrl} rel="noopener" target="_blank">{t.book}</a>
+    {experiences && <a href={experiences.data.path}>{t.ctaButton}</a>}
+    {contact && <> · <a href={contact.data.path}>{t.ctaContact}</a></>}
+  </p>
+</aside>
+
+<style>
+  .cta { margin: 40px 0 16px; padding: 24px; border-radius: 10px; background: #f3ebe4; border: 1px solid var(--line); }
+  .cta h2 { margin-top: 0; }
+  .cta .btn { margin-right: 12px; }
+</style>

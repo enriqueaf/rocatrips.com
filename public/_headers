@@ -1,0 +1,26 @@
+# Cloudflare Pages headers
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=()
+
+/_astro/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# AI-readable files
+/llms.txt
+  Content-Type: text/plain; charset=utf-8
+  Cache-Control: public, max-age=3600
+
+# Full-site dump: useful to AIs, but keep it out of Google's index (duplicate content)
+/llms-full.txt
+  Content-Type: text/plain; charset=utf-8
+  Cache-Control: public, max-age=3600
+  X-Robots-Tag: noindex
+
+# Markdown twins of each page: canonical points back to the HTML page.
+# :splat is the folder path, e.g. /climbing-tenerife/beginners/index.md → climbing-tenerife/beginners/
+# TODO after first deploy: verify with `curl -I https://rocatrips.com/climbing-tenerife/beginners/index.md`
+/*index.md
+  Content-Type: text/markdown; charset=utf-8
+  Link: <https://rocatrips.com/:splat>; rel="canonical"

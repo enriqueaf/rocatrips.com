@@ -1,0 +1,120 @@
+---
+// One route renders every content entry at its own `path`. Add a page by adding
+// a Markdown file; no new .astro file needed.
+import { render } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import Card from '../components/Card.astro';
+import Cta from '../components/Cta.astro';
+import { allEntries, byKey, listing, bookingUrl, type AnyEntry } from '../lib/routes';
+import { forEntry } from '../lib/schema';
+import { site } from '../site.config';
+import { ui, levelLabels, type Locale } from '../i18n';
+
+export async function getStaticPaths() {
+  const entries = await allEntries();
+  return entries.map((entry) => ({
+    params: { slug: entry.data.path.replace(/^\/|\/$/g, '') || undefined },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props as { entry: AnyEntry };
+const d = entry.data;
+const lang = d.lang as Locale;
+const t = ui[lang];
+const { Content } = await render(entry);
+const bookUrl = bookingUrl(entry, site.kinecall.bookingUrl);
+const schema = forEntry(entry, bookUrl);
+
+const template = entry.collection === 'pages' ? entry.data.template : entry.collection;
+const showCta = entry.collection !== 'pages' || entry.data.cta;
+
+// FAQ grouped by `group`, keeping first-appearance order.
+const faqGroups = [...Map.groupBy(d.faq, (f) => f.group ?? '')];
+const exp = entry.collection === 'experiences' ? entry.data : null;
+const area = entry.collection === 'areas' ? entry.data : null;
+
+// Listings for hub templates
+const experiences = ['home', 'experiences-hub'].includes(template) ? await listing('experiences', lang) : [];
+const areas = template === 'areas-hub' ? await listing('areas', lang) : [];
+const guides = template === 'guides-hub' ? await listing('guides', lang) : [];
+const planPages =
+  template === 'plan-hub'
+    ? (await listing('pages', lang)).filter((p) => p.data.path !== d.path && p.data.path.startsWith(d.path))
+    : [];
+
+const resolve = async (keys: string[]) =>
+  (await Promise.all(keys.map((k) => byKey(k, lang)))).filter((e): e is AnyEntry => !!e);
+const relatedKeys = exp?.related ?? (entry.collection === 'guides' ? entry.data.related : []);
+const related = await resolve(relatedKeys);
+const linkedAreas = await resolve(exp?.areas ?? []);
+const linkedExperiences = await resolve(area?.experiences ?? []);
+---
+
+<Base entry={entry} bookUrl={bookUrl} schema={schema}>
+  <article>
+    <h1>{d.h1 ?? d.title}</h1>
+    {'summary' in d && <p class="summary">{d.summary}</p>}
+
+    {exp && (
+      <>
+        <dl class="facts">
+          <div><dt>{t.from}</dt><dd>{exp.priceFrom != null ? `€${exp.priceFrom}` : t.priceOnRequest}</dd></div>
+          <div><dt>{t.duration}</dt><dd>{exp.duration}</dd></div>
+          <div><dt>{t.level}</dt><dd>{levelLabels[lang][exp.level]}</dd></div>
+          {exp.groupSize && <div><dt>{t.groupSize}</dt><dd>{exp.groupSize}</dd></div>}
+          <div><dt>{t.languages}</dt><dd>{exp.languages.join(', ')}</dd></div>
+          {exp.meetingPoint && <div><dt>{t.meetingPoint}</dt><dd>{exp.meetingPoint}</dd></div>}
+          {exp.season && <div><dt>{t.season}</dt><dd>{exp.season}</dd></div>}
+        </dl>
+        <p><a class="btn" href={bookUrl} rel="noopener" target="_blank">{t.book}</a></p>
+      </>
+    )}
+
+    {area && (
+      <dl class="facts">
+        <div><dt>Region</dt><dd>{area.region}</dd></div>
+        {area.routes && <div><dt>Routes</dt><dd>{area.routes}</dd></div>}
+        {area.grades && <div><dt>Grades</dt><dd>{area.grades}</dd></div>}
+        {area.style.length > 0 && <div><dt>Style</dt><dd>{area.style.join(', ')}</dd></div>}
+        {area.approach && <div><dt>Approach</dt><dd>{area.approach}</dd></div>}
+        {area.altitude && <div><dt>Altitude</dt><dd>{area.altitude}</dd></div>}
+        {area.aspect && <div><dt>Aspect</dt><dd>{area.aspect}</dd></div>}
+        {area.bestSeason && <div><dt>{t.season}</dt><dd>{area.bestSeason}</dd></div>}
+        {area.access && <div><dt>{area.permit ? `⚠ ${t.permit}` : 'Access'}</dt><dd>{area.access}</dd></div>}
+      </dl>
+    )}
+
+    <Content />
+
+    {exp && exp.requirements.length > 0 && (<><h2>{t.requirements}</h2><ul>{exp.requirements.map((i) => <li>{i}</li>)}</ul></>)}
+    {exp && exp.includes.length > 0 && (<><h2>{t.included}</h2><ul>{exp.includes.map((i) => <li>{i}</li>)}</ul></>)}
+    {exp && exp.bring.length > 0 && (<><h2>{t.bring}</h2><ul>{exp.bring.map((i) => <li>{i}</li>)}</ul></>)}
+    {linkedAreas.length > 0 && (<><h2>Where</h2><ul class="cards">{linkedAreas.map((e) => <Card entry={e} />)}</ul></>)}
+
+    {area && area.links.length > 0 && (
+      <><h2>Topos & references</h2><ul>{area.links.map((l) => <li><a href={l.url} rel="noopener">{l.label}</a></li>)}</ul></>
+    )}
+    {linkedExperiences.length > 0 && (<><h2>{t.climbHere}</h2><ul class="cards">{linkedExperiences.map((e) => <Card entry={e} />)}</ul></>)}
+
+    {experiences.length > 0 && <ul class="cards">{experiences.map((e) => <Card entry={e} />)}</ul>}
+    {areas.length > 0 && <ul class="cards">{areas.map((e) => <Card entry={e} />)}</ul>}
+    {guides.length > 0 && <ul class="cards">{guides.map((e) => <Card entry={e} />)}</ul>}
+    {planPages.length > 0 && <ul class="cards">{planPages.map((e) => <Card entry={e} />)}</ul>}
+
+    {d.faq.length > 0 && (
+      <section>
+        <h2>{t.faq}</h2>
+        {faqGroups.map(([group, items]) => (
+          <>
+            {group && <h3>{group}</h3>}
+            {items.map((f) => (<details open><summary><strong>{f.q}</strong></summary><p>{f.a}</p></details>))}
+          </>
+        ))}
+      </section>
+    )}
+
+    {related.length > 0 && (<><h2>{t.related}</h2><ul class="cards">{related.map((e) => <Card entry={e} />)}</ul></>)}
+  </article>
+  {showCta && <Cta lang={lang} bookUrl={bookUrl} />}
+</Base>
