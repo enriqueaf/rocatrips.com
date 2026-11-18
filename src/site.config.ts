@@ -9,7 +9,7 @@ export const site = {
     'Small-group guided rock climbing days, courses and multi-pitch routes in Tenerife, Canary Islands. Gear included, all levels.',
   email: 'hello@rocatrips.com', // TODO
   phone: '', // TODO: E.164 format, e.g. +34600000000
-  whatsapp: '', // TODO
+  whatsapp: '', // TODO: international format, digits only, e.g. 34600000000. "Ask us anything" links open WhatsApp once set (contact page until then)
   address: {
     locality: 'Arico', // TODO: confirm base location
     region: 'Santa Cruz de Tenerife',
@@ -17,9 +17,8 @@ export const site = {
   },
   geo: { lat: 28.166, lng: -16.48 }, // TODO: approximate Arico, replace with meeting point
   kinecall: {
-    // TODO: replace with the real Kinecall booking page. Experiences can override
-    // this with their own `kinecallUrl` deep link.
-    bookingUrl: 'https://kinecall.com/',
+    // Experiences can override this with their own `kinecallUrl` deep link.
+    bookingUrl: 'https://rocatrips-9-dtg.kinecall.com/',
   },
   // Trust facts: the "why climb with us" proof shown in the trust bar (experience
   // pages, experiences hub, home, about), in LocalBusiness JSON-LD and in llms.txt.

@@ -162,3 +162,10 @@ test('page transitions are enabled', () => {
   const css = files.filter((f) => f.endsWith('.css')).map(read).join('');
   assert.match(css, /@view-transition\s*\{\s*navigation:\s*auto/, '@view-transition rule');
 });
+
+test('Book links go to Kinecall and FAQ accordions animate', () => {
+  const html = read(join(DIST, 'index.html'));
+  assert.match(html, /href="https:\/\/rocatrips-9-dtg\.kinecall\.com\/\?utm_source=rocatrips\.com/, 'Kinecall booking link');
+  const css = files.filter((f) => f.endsWith('.css')).map(read).join('');
+  assert.match(css, /::details-content/, 'accordion transition');
+});

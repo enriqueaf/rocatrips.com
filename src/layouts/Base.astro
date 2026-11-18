@@ -119,7 +119,9 @@ const jsonLd = [organization(), ...(trail.length > 1 ? [breadcrumbList(trail)] :
         .menu-toggle .icon { color: var(--accent); }
         .menu-toggle .i-close, .menu-toggle[open] .i-open { display: none; }
         .menu-toggle[open] .i-close { display: block; }
-        .menu-toggle:not([open]) + .menu { display: none; }
+        .menu-toggle:not([open]) + .menu { display: none; opacity: 0; transform: translateY(-8px); }
+        .menu { transition: opacity 0.22s ease, transform 0.22s ease, display 0.22s allow-discrete; }
+        @starting-style { .menu-toggle[open] + .menu { opacity: 0; transform: translateY(-8px); } }
         .menu { position: absolute; top: 100%; left: 0; right: 0; flex-direction: column; align-items: stretch; gap: 0; padding: 8px var(--gutter) 24px; background: var(--ink); border-top: 1px solid #26282c; }
         .menu ul { flex-direction: column; gap: 0; }
         .menu ul a { display: block; padding: 16px 0; font-size: 15px; border-bottom: 1px solid #26282c; }
@@ -169,6 +171,13 @@ const jsonLd = [organization(), ...(trail.length > 1 ? [breadcrumbList(trail)] :
       .faq__toggle { flex: none; color: var(--accent); transition: transform 0.2s ease; }
       .faq details[open] .faq__toggle { transform: rotate(45deg); }
       .faq details p { margin: 0 0 20px; color: var(--muted); }
+      /* Accordion animation: height to/from auto, CSS only. Browsers without
+         ::details-content / interpolate-size just open instantly. */
+      :root { interpolate-size: allow-keywords; }
+      .faq details::details-content { block-size: 0; overflow: hidden; opacity: 0; transition: block-size 0.35s cubic-bezier(0.2, 0.7, 0.2, 1), opacity 0.3s ease, content-visibility 0.35s allow-discrete; }
+      .faq details[open]::details-content { block-size: auto; opacity: 1; }
+      .faq summary strong { transition: color 0.15s; }
+      .faq summary:hover strong { color: var(--accent); }
 
       .updated { font-size: 13px; color: var(--muted); margin: 48px 0 0; }
 

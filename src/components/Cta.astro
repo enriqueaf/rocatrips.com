@@ -6,12 +6,13 @@ import { ui, type Locale } from '../i18n';
 import { byKey } from '../lib/routes';
 import { photo } from '../lib/images';
 import Icon from './Icon.astro';
+import { askUsLink } from '../lib/contact';
 
 interface Props { lang: Locale; bookUrl: string; }
 const { lang, bookUrl } = Astro.props;
 const t = ui[lang];
 const experiences = await byKey('experiences', lang);
-const contact = await byKey('contact', lang);
+const ask = await askUsLink(lang);
 const pic = photo('anaga-ridges');
 ---
 
@@ -23,7 +24,11 @@ const pic = photo('anaga-ridges');
     <div class="cta__actions">
       <a class="btn" href={bookUrl} rel="noopener" target="_blank">{t.book}</a>
       {experiences && <a class="btn btn--light" href={experiences.data.path}>{t.ctaButton}</a>}
-      {contact && <a class="cta__link" href={contact.data.path}>{t.ctaContact} <Icon name="arrow-right" size="18px" /></a>}
+      {ask && (
+        <a class="cta__link" href={ask.href} {...(ask.external ? { target: '_blank', rel: 'noopener' } : {})}>
+          {ask.external && <Icon name="whatsapp" size="20px" />}{t.ctaContact} <Icon name="arrow-right" size="18px" />
+        </a>
+      )}
     </div>
   </div>
 </aside>

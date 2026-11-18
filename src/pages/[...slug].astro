@@ -13,6 +13,7 @@ import Tiles from '../components/Tiles.astro';
 import Reasons from '../components/Reasons.astro';
 import { Image } from 'astro:assets';
 import Icon from '../components/Icon.astro';
+import { askUsLink } from '../lib/contact';
 import { photoFor, photo } from '../lib/images';
 import { allEntries, byKey, listing, bookingUrl, type AnyEntry } from '../lib/routes';
 import { forEntry } from '../lib/schema';
@@ -66,7 +67,7 @@ const page = entry.collection === 'pages' ? entry.data : null;
 const section = (id: string) => page?.sections.find((s) => s.id === id);
 const tenerife = section('tenerife');
 const whyUs = section('why-us');
-const contactPage = isHome ? await byKey('contact', lang) : undefined;
+const ask = isHome ? await askUsLink(lang) : undefined;
 const promoPic = photo('taganana-light');
 
 // Fact grids: [Iconoir icon, label, value]; empty values are skipped.
@@ -143,13 +144,15 @@ const eyebrow = exp ? `${levelLabels[lang][exp.level]} · ${exp.duration}` : are
 
     {!cardsFirst && experiences.length > 0 && (
       <ul class:list={['cards', { 'cards--home': isHome }]} id="experiences">
-        {isHome && contactPage && (
+        {isHome && ask && (
           <li class="promo">
             <Image src={promoPic.src} alt={promoPic.alt} widths={[640, 1024, 1400]} sizes="(max-width: 640px) 100vw, 50vw" />
             <div class="promo__text">
               <h3 class="display">{t.promoTitle}</h3>
               <p>{t.promoText}</p>
-              <a class="btn btn--light" href={contactPage.data.path}>{t.ctaContact}</a>
+              <a class="btn btn--light" href={ask.href} {...(ask.external ? { target: '_blank', rel: 'noopener' } : {})}>
+                {ask.external && <Icon name="whatsapp" size="18px" />}{t.ctaContact}
+              </a>
             </div>
           </li>
         )}
