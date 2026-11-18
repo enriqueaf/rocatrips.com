@@ -5,6 +5,7 @@ import { Image } from 'astro:assets';
 import { ui, type Locale } from '../i18n';
 import { byKey } from '../lib/routes';
 import { photo } from '../lib/images';
+import Icon from './Icon.astro';
 
 interface Props { lang: Locale; bookUrl: string; }
 const { lang, bookUrl } = Astro.props;
@@ -22,7 +23,7 @@ const pic = photo('anaga-ridges');
     <div class="cta__actions">
       <a class="btn" href={bookUrl} rel="noopener" target="_blank">{t.book}</a>
       {experiences && <a class="btn btn--light" href={experiences.data.path}>{t.ctaButton}</a>}
-      {contact && <a class="cta__link" href={contact.data.path}>{t.ctaContact} →</a>}
+      {contact && <a class="cta__link" href={contact.data.path}>{t.ctaContact} <Icon name="arrow-right" size="18px" /></a>}
     </div>
   </div>
 </aside>
@@ -35,6 +36,6 @@ const pic = photo('anaga-ridges');
   .cta h2 { font-size: clamp(28px, 4vw, 48px); margin: 0 0 16px; color: #fff; }
   .cta p { font-size: 18px; margin: 0 auto 30px; max-width: 52ch; }
   .cta__actions { display: flex; flex-wrap: wrap; gap: 12px 14px; justify-content: center; align-items: center; }
-  .cta__link { color: #fff; font: 800 13px/1 var(--font); letter-spacing: 0.08em; text-transform: uppercase; text-decoration: none; padding: 8px 4px; }
+  .cta__link { display: inline-flex; align-items: center; gap: 6px; color: #fff; font: 800 13px/1 var(--font); letter-spacing: 0.08em; text-transform: uppercase; text-decoration: none; padding: 8px 4px; }
   .cta__link:hover { text-decoration: underline; }
 </style>

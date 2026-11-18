@@ -4,6 +4,7 @@
 // in the build and shown as TODO in dev.
 import { site } from '../site.config';
 import type { Locale } from '../i18n';
+import Icon from './Icon.astro';
 
 interface Props { lang: Locale; }
 const { lang } = Astro.props;
@@ -31,15 +32,15 @@ const L = {
   },
 }[lang];
 
-// [text, todo hint]: text is empty when the fact isn't confirmed yet.
-const items: [string, string][] = [
-  [t.qualification ? L.qual : '', 'guide qualification'],
-  [years ? L.years(years) : '', 'guiding since'],
-  [t.maxClimbersPerGuide ? L.ratio(t.maxClimbersPerGuide) : '', 'climbers per guide'],
-  [t.insured ? L.insured : '', 'insurance'],
-  [t.activeTourismRegistered ? L.reg : '', 'active-tourism registration'],
-  [t.firstAid ? L.firstAid : '', 'first aid'],
-  [t.climbersGuided ? L.guided(t.climbersGuided) : '', 'climbers guided'],
+// [text, todo hint, Iconoir icon]: text is empty when the fact isn't confirmed yet.
+const items: [string, string, string][] = [
+  [t.qualification ? L.qual : '', 'guide qualification', 'medal'],
+  [years ? L.years(years) : '', 'guiding since', 'calendar-check'],
+  [t.maxClimbersPerGuide ? L.ratio(t.maxClimbersPerGuide) : '', 'climbers per guide', 'group'],
+  [t.insured ? L.insured : '', 'insurance', 'shield-check'],
+  [t.activeTourismRegistered ? L.reg : '', 'active-tourism registration', 'badge-check'],
+  [t.firstAid ? L.firstAid : '', 'first aid', 'healthcare'],
+  [t.climbersGuided ? L.guided(t.climbersGuided) : '', 'climbers guided', 'community'],
 ];
 const dev = import.meta.env.DEV;
 const shown = items.filter(([text]) => text || dev);
@@ -47,7 +48,7 @@ const shown = items.filter(([text]) => text || dev);
 
 {shown.length > 0 && (
   <ul class="trust" aria-label={L.aria}>
-    {shown.map(([text, hint]) => text ? <li>{text}</li> : <li class="todo">TODO: {hint} (site.config.ts → trust)</li>)}
+    {shown.map(([text, hint, icon]) => text ? <li><Icon name={icon} size="22px" />{text}</li> : <li class="todo">TODO: {hint} (site.config.ts → trust)</li>)}
   </ul>
 )}
 
@@ -55,6 +56,6 @@ const shown = items.filter(([text]) => text || dev);
   .trust { display: flex; flex-wrap: wrap; gap: 1px; padding: 0; margin: 0 0 40px; list-style: none; background: var(--surface); border: 1px solid var(--line); box-shadow: inset 0 0 0 1px var(--surface); }
   .trust li { outline: 1px solid var(--line); }
   .trust li { flex: 1 1 220px; display: flex; gap: 10px; align-items: flex-start; font: 700 13px/1.35 var(--font); letter-spacing: 0.04em; text-transform: uppercase; padding: 16px 18px; background: var(--surface); }
-  .trust li::before { content: ''; flex: none; width: 14px; height: 8px; margin-top: 3px; border: solid var(--accent); border-width: 0 0 3px 3px; transform: rotate(-45deg); }
-  .trust li.todo::before { display: none; }
+  .trust li { align-items: center; }
+  .trust :global(.icon) { flex: none; color: var(--accent); }
 </style>

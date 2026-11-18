@@ -1,0 +1,33 @@
+---
+// Inline SVG icon from Iconoir (https://iconoir.com, MIT). Resolved at build
+// time, so pages ship plain <svg> markup: no icon font, no JavaScript.
+// Browse names at https://iconoir.com (file names in node_modules/iconoir/icons/regular).
+interface Props {
+  name: string;
+  size?: string; // CSS length, defaults to 1.25em
+  class?: string;
+  label?: string; // accessible name; omit for decorative icons
+}
+const { name, size = '1.25em', class: className, label } = Astro.props;
+
+const icons = import.meta.glob<string>('/node_modules/iconoir/icons/regular/*.svg', { query: '?raw', import: 'default' });
+const load = icons[`/node_modules/iconoir/icons/regular/${name}.svg`];
+if (!load) throw new Error(`Unknown Iconoir icon "${name}"`);
+const raw = await load();
+
+const inner = raw.replace(/^[\s\S]*?<svg[^>]*>/, '').replace(/<\/svg>\s*$/, '');
+---
+
+<svg
+  class:list={['icon', className]}
+  width={size}
+  height={size}
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke-width="1.8"
+  aria-hidden={label ? undefined : 'true'}
+  role={label ? 'img' : undefined}
+  aria-label={label}
+  focusable="false"
+  set:html={inner}
+/>

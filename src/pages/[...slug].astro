@@ -12,6 +12,7 @@ import Stats from '../components/Stats.astro';
 import Tiles from '../components/Tiles.astro';
 import Reasons from '../components/Reasons.astro';
 import { Image } from 'astro:assets';
+import Icon from '../components/Icon.astro';
 import { photoFor, photo } from '../lib/images';
 import { allEntries, byKey, listing, bookingUrl, type AnyEntry } from '../lib/routes';
 import { forEntry } from '../lib/schema';
@@ -67,6 +68,33 @@ const tenerife = section('tenerife');
 const whyUs = section('why-us');
 const contactPage = isHome ? await byKey('contact', lang) : undefined;
 const promoPic = photo('taganana-light');
+
+// Fact grids: [Iconoir icon, label, value]; empty values are skipped.
+type Fact = [string, string, string | undefined | null];
+const facts: Fact[] = exp
+  ? [
+      ['euro', t.from, exp.priceFrom != null ? `€${exp.priceFrom}` : t.priceOnRequest],
+      ['clock', t.duration, exp.duration],
+      ['graph-up', t.level, levelLabels[lang][exp.level]],
+      ['group', t.groupSize, exp.groupSize],
+      ['translate', t.languages, exp.languages.join(', ')],
+      ['map-pin', t.meetingPoint, exp.meetingPoint],
+      ['calendar', t.season, exp.season],
+    ]
+  : area
+    ? [
+        ['position', 'Region', area.region],
+        ['path-arrow', 'Routes', area.routes],
+        ['stat-up', 'Grades', area.grades],
+        ['compass', 'Style', area.style.join(', ')],
+        ['trekking', 'Approach', area.approach],
+        ['triangle', 'Altitude', area.altitude],
+        ['sun-light', 'Aspect', area.aspect],
+        ['calendar', t.season, area.bestSeason],
+        [area.permit ? 'warning-triangle' : 'shield-check', area.permit ? t.permit : 'Access', area.access],
+      ]
+    : [];
+const shownFacts = facts.filter(([, , v]) => v);
 const areasHub = isHome ? await byKey('areas', lang) : undefined;
 const lead = 'summary' in d && d.summary ? d.summary : isHome ? d.description : undefined;
 const eyebrow = exp ? `${levelLabels[lang][exp.level]} · ${exp.duration}` : area ? area.region : undefined;
@@ -80,51 +108,36 @@ const eyebrow = exp ? `${levelLabels[lang][exp.level]} · ${exp.duration}` : are
   {page && page.stats.length > 0 && <Stats slot="hero" stats={page.stats} />}
   <article>
 
-    {exp && (
-      <>
-        <dl class="facts">
-          <div><dt>{t.from}</dt><dd>{exp.priceFrom != null ? `€${exp.priceFrom}` : t.priceOnRequest}</dd></div>
-          <div><dt>{t.duration}</dt><dd>{exp.duration}</dd></div>
-          <div><dt>{t.level}</dt><dd>{levelLabels[lang][exp.level]}</dd></div>
-          {exp.groupSize && <div><dt>{t.groupSize}</dt><dd>{exp.groupSize}</dd></div>}
-          <div><dt>{t.languages}</dt><dd>{exp.languages.join(', ')}</dd></div>
-          {exp.meetingPoint && <div><dt>{t.meetingPoint}</dt><dd>{exp.meetingPoint}</dd></div>}
-          {exp.season && <div><dt>{t.season}</dt><dd>{exp.season}</dd></div>}
-        </dl>
-      </>
+    {shownFacts.length > 0 && (
+      <dl class:list={['facts', { 'facts--warn': area?.permit }]}>
+        {shownFacts.map(([icon, label, value]) => (
+          <div class:list={{ warn: icon === 'warning-triangle' }}>
+            <Icon name={icon} size="24px" />
+            <dt>{label}</dt>
+            <dd>{value}</dd>
+          </div>
+        ))}
+      </dl>
     )}
 
     {showTrust && <TrustBar lang={lang} />}
     {cardsFirst && experiences.length > 0 && <ul class="cards">{experiences.map((e) => <Card entry={e} />)}</ul>}
 
-    {area && (
-      <dl class="facts">
-        <div><dt>Region</dt><dd>{area.region}</dd></div>
-        {area.routes && <div><dt>Routes</dt><dd>{area.routes}</dd></div>}
-        {area.grades && <div><dt>Grades</dt><dd>{area.grades}</dd></div>}
-        {area.style.length > 0 && <div><dt>Style</dt><dd>{area.style.join(', ')}</dd></div>}
-        {area.approach && <div><dt>Approach</dt><dd>{area.approach}</dd></div>}
-        {area.altitude && <div><dt>Altitude</dt><dd>{area.altitude}</dd></div>}
-        {area.aspect && <div><dt>Aspect</dt><dd>{area.aspect}</dd></div>}
-        {area.bestSeason && <div><dt>{t.season}</dt><dd>{area.bestSeason}</dd></div>}
-        {area.access && <div><dt>{area.permit ? `⚠ ${t.permit}` : 'Access'}</dt><dd>{area.access}</dd></div>}
-      </dl>
-    )}
 
     <div class:list={['prose', { 'home-intro': isHome }]}><Content /></div>
 
     {exp && (exp.requirements.length > 0 || exp.includes.length > 0 || exp.bring.length > 0) && (
       <div class="lists">
-        {exp.requirements.length > 0 && <section><h2>{t.requirements}</h2><ul>{exp.requirements.map((i) => <li>{i}</li>)}</ul></section>}
-        {exp.includes.length > 0 && <section><h2>{t.included}</h2><ul>{exp.includes.map((i) => <li>{i}</li>)}</ul></section>}
-        {exp.bring.length > 0 && <section><h2>{t.bring}</h2><ul>{exp.bring.map((i) => <li>{i}</li>)}</ul></section>}
+        {exp.requirements.length > 0 && <section><h2>{t.requirements}</h2><ul>{exp.requirements.map((i) => <li><Icon name="warning-circle" size="20px" />{i}</li>)}</ul></section>}
+        {exp.includes.length > 0 && <section><h2>{t.included}</h2><ul>{exp.includes.map((i) => <li><Icon name="check-circle" size="20px" />{i}</li>)}</ul></section>}
+        {exp.bring.length > 0 && <section><h2>{t.bring}</h2><ul>{exp.bring.map((i) => <li><Icon name="bag" size="20px" />{i}</li>)}</ul></section>}
       </div>
     )}
     {exp && <p><a class="btn" href={bookUrl} rel="noopener" target="_blank">{t.book}</a></p>}
     {linkedAreas.length > 0 && (<><h2>Where</h2><ul class="cards">{linkedAreas.map((e) => <Card entry={e} />)}</ul></>)}
 
     {area && area.links.length > 0 && (
-      <><h2>Topos & references</h2><ul class="prose">{area.links.map((l) => <li><a href={l.url} rel="noopener">{l.label}</a></li>)}</ul></>
+      <><h2>Topos & references</h2><ul class="prose">{area.links.map((l) => <li><a class="ext" href={l.url} rel="noopener">{l.label} <Icon name="open-new-window" size="16px" /></a></li>)}</ul></>
     )}
     {linkedExperiences.length > 0 && (<><h2>{t.climbHere}</h2><ul class="cards">{linkedExperiences.map((e) => <Card entry={e} />)}</ul></>)}
 
@@ -158,7 +171,7 @@ const eyebrow = exp ? `${levelLabels[lang][exp.level]} · ${exp.duration}` : are
         {faqGroups.map(([group, items]) => (
           <>
             {group && <h3>{group}</h3>}
-            {items.map((f) => (<details><summary><strong>{f.q}</strong></summary><p>{f.a}</p></details>))}
+            {items.map((f) => (<details><summary><strong>{f.q}</strong><Icon name="plus" size="22px" class="faq__toggle" /></summary><p>{f.a}</p></details>))}
           </>
         ))}
       </section>
@@ -172,9 +185,10 @@ const eyebrow = exp ? `${levelLabels[lang][exp.level]} · ${exp.duration}` : are
 <style>
   .lists { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); gap: 0 40px; margin: 16px 0 32px; }
   .lists h2 { font-size: 18px; margin: 32px 0 12px; padding-bottom: 10px; border-bottom: 3px solid var(--ink); }
-  .lists ul { margin: 0; padding-left: 1.2em; }
-  .lists li { margin: 6px 0; }
-  .lists li::marker { color: var(--accent); }
+  .lists ul { margin: 0; padding: 0; list-style: none; }
+  .lists li { display: flex; gap: 10px; align-items: flex-start; margin: 10px 0; line-height: 1.45; }
+  .lists li :global(.icon) { flex: none; color: var(--accent); margin-top: 1px; }
+  .ext { display: inline-flex; align-items: center; gap: 6px; }
   .cards--home { grid-template-columns: repeat(4, 1fr); grid-auto-flow: dense; }
   .promo { position: relative; grid-column: span 2; display: flex; align-items: flex-end; min-height: 420px; color: #fff; background: var(--ink); isolation: isolate; overflow: hidden; }
   .promo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: -2; }

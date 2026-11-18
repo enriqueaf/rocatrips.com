@@ -144,3 +144,21 @@ test('production build hides dev-only placeholders', () => {
     assert.doesNotMatch(html, /<li class="todo"/, `${url(f)}: trust-bar TODO leaked`);
   }
 });
+
+test('Iconoir icons render as inline SVG', () => {
+  const html = read(join(DIST, 'climbing-tenerife/beginners/index.html'));
+  const icons = html.match(/<svg class="icon[^"]*"[^>]*aria-hidden="true"/g) ?? [];
+  assert.ok(icons.length >= 10, `expected icons on experience page, found ${icons.length}`);
+  assert.doesNotMatch(html, /<svg class="icon[^>]*>\s*<\/svg>/, 'empty icon');
+});
+
+test('Markdown tables are styled content, not raw pipes', () => {
+  const html = read(join(DIST, 'plan-your-trip/best-time-to-climb-tenerife/index.html'));
+  assert.match(html, /<div class="prose"[^>]*>[\s\S]*<table>[\s\S]*<thead>/, 'table rendered inside .prose');
+  assert.doesNotMatch(html, /\|---\|/, 'unrendered Markdown table');
+});
+
+test('page transitions are enabled', () => {
+  const css = files.filter((f) => f.endsWith('.css')).map(read).join('');
+  assert.match(css, /@view-transition\s*\{\s*navigation:\s*auto/, '@view-transition rule');
+});

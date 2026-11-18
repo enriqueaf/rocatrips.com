@@ -2,12 +2,12 @@
 import { Image } from 'astro:assets';
 import type { AnyEntry } from '../lib/routes';
 import { photoFor } from '../lib/images';
+import Icon from './Icon.astro';
 import { levelLabels, ui, type Locale } from '../i18n';
 
 const { entry } = Astro.props as { entry: AnyEntry };
 const d = entry.data;
 const lang = d.lang as Locale;
-const text = 'summary' in d ? d.summary : d.description;
 const pic = photoFor(entry);
 ---
 
@@ -24,8 +24,7 @@ const pic = photoFor(entry);
     )}
     {entry.collection === 'areas' && <p class="eyebrow">{entry.data.region}{entry.data.grades && <> · {entry.data.grades}</>}</p>}
     <h3><a href={d.path}>{d.navLabel ?? d.h1 ?? d.title}</a></h3>
-    <p>{text}</p>
-    <span class="card__more" aria-hidden="true">{ui[lang].readMore} →</span>
+    <span class="card__more" aria-hidden="true">{ui[lang].readMore} <Icon name="arrow-right" size="16px" /></span>
   </div>
 </li>
 
@@ -37,13 +36,14 @@ const pic = photoFor(entry);
   .card:hover .card__media img { transform: scale(1.04); }
   .card__price { position: absolute; left: 0; bottom: 0; background: var(--accent); color: #fff; font: 800 13px/1 var(--font); letter-spacing: 0.06em; text-transform: uppercase; padding: 9px 12px; }
   .card__body { display: flex; flex-direction: column; flex: 1; padding: 20px 20px 22px; }
-  .card h3 { font-size: 19px; margin: 0 0 10px; }
+  .card h3 { font-size: 19px; margin: 0 0 18px; }
   .card h3 a { color: inherit; text-decoration: none; }
   /* Whole card is clickable, one link in the a11y tree. */
   .card h3 a::after { content: ''; position: absolute; inset: 0; }
   .card h3 a:focus-visible { outline: none; }
   .card:has(a:focus-visible) { outline: 3px solid var(--accent); outline-offset: 2px; }
-  .card p:not(.eyebrow) { margin: 0 0 16px; color: var(--muted); font-size: 15px; line-height: 1.55; }
   .card .eyebrow { margin: 0 0 8px; }
-  .card__more { margin-top: auto; font: 800 12px/1 var(--font); letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); }
+  .card__more { display: inline-flex; align-items: center; gap: 6px; margin-top: auto; font: 800 12px/1 var(--font); letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); }
+  .card__more :global(.icon) { transition: transform 0.2s ease; }
+  .card:hover .card__more :global(.icon) { transform: translateX(4px); }
 </style>

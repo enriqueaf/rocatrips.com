@@ -8,7 +8,7 @@
   // Custom domain: wrangler deploy creates the DNS record and certificate.
   // Requires the rocatrips.com zone to be on the same Cloudflare account.
   "routes": [
-    { "pattern": "rocatrips.com", "custom_domain": true }
+    { "pattern": "rocatrips.com", "zone_name": "rocatrips.com", "custom_domain": true }
   ],
   "assets": {
     "directory": "./dist",
