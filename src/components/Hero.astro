@@ -1,0 +1,73 @@
+---
+// Full-bleed photo hero with the page title overlaid (Black Diamond-style).
+// `size="full"` for the home page, `page` for every other page.
+import { Picture } from 'astro:assets';
+import type { Photo } from '../lib/images';
+
+interface Props {
+  photo: Photo;
+  title: string;
+  lead?: string;
+  eyebrow?: string;
+  size?: 'full' | 'page';
+  align?: 'left' | 'right';
+}
+const { photo, title, lead, eyebrow, size = 'page', align = 'left' } = Astro.props;
+---
+
+<section class:list={['hero', `hero--${size}`, `hero--${align}`]}>
+  <Picture
+    src={photo.src}
+    alt={photo.alt}
+    widths={[640, 1024, 1600, 2200]}
+    sizes="100vw"
+    formats={['avif', 'webp']}
+    loading="eager"
+    fetchpriority="high"
+    class="hero__img"
+  />
+  <div class="hero__inner">
+    <div class="hero__text">
+      {eyebrow && <p class="eyebrow">{eyebrow}</p>}
+      <h1 class="display">{title}</h1>
+      {lead && <p class="hero__lead">{lead}</p>}
+      {Astro.slots.has('default') && <div class="hero__actions"><slot /></div>}
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero { position: relative; display: grid; color: #fff; background: var(--ink); overflow: hidden; isolation: isolate; }
+  .hero--full { min-height: min(88vh, 860px); }
+  .hero--page { min-height: clamp(340px, 52vh, 520px); }
+  .hero :global(picture), .hero__img { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .hero :global(img) { width: 100%; height: 100%; object-fit: cover; z-index: -2; }
+  .hero::after {
+    content: ''; position: absolute; inset: 0; z-index: -1;
+    background: linear-gradient(to right, rgb(10 12 16 / 0.72) 0%, rgb(10 12 16 / 0.35) 50%, rgb(10 12 16 / 0.05) 100%),
+      linear-gradient(to top, rgb(10 12 16 / 0.55), transparent 45%);
+  }
+  .hero--right::after {
+    background: linear-gradient(to left, rgb(10 12 16 / 0.72) 0%, rgb(10 12 16 / 0.35) 50%, rgb(10 12 16 / 0.05) 100%),
+      linear-gradient(to top, rgb(10 12 16 / 0.55), transparent 45%);
+  }
+  .hero__inner { align-self: end; width: 100%; max-width: var(--wide); margin: 0 auto; padding: 96px var(--gutter) clamp(40px, 7vw, 88px); }
+  .hero--full .hero__inner { align-self: center; }
+  .hero__text { max-width: 780px; }
+  .hero__lead, .hero__actions { max-width: 620px; }
+  .hero--right .hero__text { margin-left: auto; text-align: right; }
+  .hero h1 { color: #fff; margin: 0 0 18px; font-size: clamp(34px, 5.4vw, 68px); text-shadow: 0 2px 24px rgb(0 0 0 / 0.25); }
+  .hero--page h1 { font-size: clamp(30px, 4.2vw, 52px); }
+  .hero__lead { font-size: clamp(17px, 1.6vw, 20px); line-height: 1.5; margin: 0 0 28px; max-width: 54ch; }
+  .hero--right .hero__lead { margin-left: auto; }
+  .hero__actions { display: flex; flex-wrap: wrap; gap: 10px; }
+  .hero--right .hero__actions { justify-content: flex-end; }
+  .eyebrow { color: #fff; opacity: 0.85; }
+  @media (max-width: 640px) {
+    .hero::after, .hero--right::after { background: linear-gradient(to top, rgb(10 12 16 / 0.85) 10%, rgb(10 12 16 / 0.25) 70%); }
+    .hero--full .hero__inner { align-self: end; }
+    .hero--right .hero__text { text-align: left; margin-left: 0; }
+    .hero--right .hero__lead { margin-left: 0; }
+    .hero--right .hero__actions { justify-content: flex-start; }
+  }
+</style>

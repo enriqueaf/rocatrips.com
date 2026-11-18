@@ -21,6 +21,22 @@ export const site = {
     // this with their own `kinecallUrl` deep link.
     bookingUrl: 'https://kinecall.com/',
   },
+  // Trust facts: the "why climb with us" proof shown in the trust bar (experience
+  // pages, experiences hub, home, about), in LocalBusiness JSON-LD and in llms.txt.
+  // Only fill in what you can prove. Empty values are hidden on the live site and
+  // show as TODO in `npm run dev`.
+  trust: {
+    foundedYear: null as number | null, // TODO: year Rocatrips the company was founded (emitted as foundingDate)
+    guidingSince: 2014, // Pablo Vicens: 12 years as a professional climbing guide (as of 2026)
+    leadGuide: 'Pablo Vicens',
+    qualification: 'Técnico Deportivo Superior en Escalada (TD3)',
+    firstAid: true, // guide holds a current first-aid certificate
+    maxClimbersPerGuide: 2,
+    insured: true, // civil liability + accident insurance, up to date
+    activeTourismRegistered: true, // registered active-tourism company, Canary Islands
+    registrationNumber: '', // TODO: Canary Islands active-tourism registration number
+    climbersGuided: '', // TODO: e.g. '3,000+' (people guided, all time)
+  },
   social: {
     instagram: '', // TODO
     tripadvisor: '', // TODO

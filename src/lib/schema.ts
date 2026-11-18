@@ -22,6 +22,7 @@ export function organization() {
     },
     geo: { '@type': 'GeoCoordinates', latitude: site.geo.lat, longitude: site.geo.lng },
     areaServed: { '@type': 'Place', name: 'Tenerife, Canary Islands, Spain' },
+    ...(site.trust.foundedYear ? { foundingDate: String(site.trust.foundedYear) } : {}),
     sameAs: Object.values(site.social).filter(Boolean),
   };
 }

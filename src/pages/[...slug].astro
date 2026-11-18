@@ -5,6 +5,10 @@ import { render } from 'astro:content';
 import Base from '../layouts/Base.astro';
 import Card from '../components/Card.astro';
 import Cta from '../components/Cta.astro';
+import TrustBar from '../components/TrustBar.astro';
+import Hero from '../components/Hero.astro';
+import Banner from '../components/Banner.astro';
+import { photoFor, photo } from '../lib/images';
 import { allEntries, byKey, listing, bookingUrl, type AnyEntry } from '../lib/routes';
 import { forEntry } from '../lib/schema';
 import { site } from '../site.config';
@@ -28,6 +32,9 @@ const schema = forEntry(entry, bookUrl);
 
 const template = entry.collection === 'pages' ? entry.data.template : entry.collection;
 const showCta = entry.collection !== 'pages' || entry.data.cta;
+const showTrust = entry.collection === 'experiences' || ['home', 'experiences-hub'].includes(template) || d.translationKey === 'about';
+// On the experiences hub the cards come first, so the "why us" body doesn't push them down.
+const cardsFirst = template === 'experiences-hub';
 
 // FAQ grouped by `group`, keeping first-appearance order.
 const faqGroups = [...Map.groupBy(d.faq, (f) => f.group ?? '')];
@@ -49,12 +56,18 @@ const relatedKeys = exp?.related ?? (entry.collection === 'guides' ? entry.data.
 const related = await resolve(relatedKeys);
 const linkedAreas = await resolve(exp?.areas ?? []);
 const linkedExperiences = await resolve(area?.experiences ?? []);
+const isHome = template === 'home';
+const areasHub = isHome ? await byKey('areas', lang) : undefined;
+const lead = 'summary' in d && d.summary ? d.summary : isHome ? d.description : undefined;
+const eyebrow = exp ? `${levelLabels[lang][exp.level]} · ${exp.duration}` : area ? area.region : undefined;
 ---
 
 <Base entry={entry} bookUrl={bookUrl} schema={schema}>
+  <Hero slot="hero" photo={photoFor(entry)} title={d.h1 ?? d.title} lead={lead} eyebrow={eyebrow} size={isHome ? 'full' : 'page'}>
+    {(isHome || exp) && <a class="btn" href={bookUrl} rel="noopener" target="_blank">{t.book}</a>}
+    {isHome && experiences.length > 0 && <a class="btn btn--light" href="#experiences">{t.ctaButton}</a>}
+  </Hero>
   <article>
-    <h1>{d.h1 ?? d.title}</h1>
-    {'summary' in d && <p class="summary">{d.summary}</p>}
 
     {exp && (
       <>
@@ -67,9 +80,11 @@ const linkedExperiences = await resolve(area?.experiences ?? []);
           {exp.meetingPoint && <div><dt>{t.meetingPoint}</dt><dd>{exp.meetingPoint}</dd></div>}
           {exp.season && <div><dt>{t.season}</dt><dd>{exp.season}</dd></div>}
         </dl>
-        <p><a class="btn" href={bookUrl} rel="noopener" target="_blank">{t.book}</a></p>
       </>
     )}
+
+    {showTrust && <TrustBar lang={lang} />}
+    {cardsFirst && experiences.length > 0 && <ul class="cards">{experiences.map((e) => <Card entry={e} />)}</ul>}
 
     {area && (
       <dl class="facts">
@@ -85,30 +100,38 @@ const linkedExperiences = await resolve(area?.experiences ?? []);
       </dl>
     )}
 
-    <Content />
+    <div class="prose"><Content /></div>
 
-    {exp && exp.requirements.length > 0 && (<><h2>{t.requirements}</h2><ul>{exp.requirements.map((i) => <li>{i}</li>)}</ul></>)}
-    {exp && exp.includes.length > 0 && (<><h2>{t.included}</h2><ul>{exp.includes.map((i) => <li>{i}</li>)}</ul></>)}
-    {exp && exp.bring.length > 0 && (<><h2>{t.bring}</h2><ul>{exp.bring.map((i) => <li>{i}</li>)}</ul></>)}
+    {exp && (exp.requirements.length > 0 || exp.includes.length > 0 || exp.bring.length > 0) && (
+      <div class="lists">
+        {exp.requirements.length > 0 && <section><h2>{t.requirements}</h2><ul>{exp.requirements.map((i) => <li>{i}</li>)}</ul></section>}
+        {exp.includes.length > 0 && <section><h2>{t.included}</h2><ul>{exp.includes.map((i) => <li>{i}</li>)}</ul></section>}
+        {exp.bring.length > 0 && <section><h2>{t.bring}</h2><ul>{exp.bring.map((i) => <li>{i}</li>)}</ul></section>}
+      </div>
+    )}
+    {exp && <p><a class="btn" href={bookUrl} rel="noopener" target="_blank">{t.book}</a></p>}
     {linkedAreas.length > 0 && (<><h2>Where</h2><ul class="cards">{linkedAreas.map((e) => <Card entry={e} />)}</ul></>)}
 
     {area && area.links.length > 0 && (
-      <><h2>Topos & references</h2><ul>{area.links.map((l) => <li><a href={l.url} rel="noopener">{l.label}</a></li>)}</ul></>
+      <><h2>Topos & references</h2><ul class="prose">{area.links.map((l) => <li><a href={l.url} rel="noopener">{l.label}</a></li>)}</ul></>
     )}
     {linkedExperiences.length > 0 && (<><h2>{t.climbHere}</h2><ul class="cards">{linkedExperiences.map((e) => <Card entry={e} />)}</ul></>)}
 
-    {experiences.length > 0 && <ul class="cards">{experiences.map((e) => <Card entry={e} />)}</ul>}
+    {!cardsFirst && experiences.length > 0 && <ul class="cards" id="experiences">{experiences.map((e) => <Card entry={e} />)}</ul>}
+    {areasHub && (
+      <Banner photo={photo('teide-roques')} title={t.bannerTitle} text={t.bannerText} href={areasHub.data.path} label={t.bannerButton} />
+    )}
     {areas.length > 0 && <ul class="cards">{areas.map((e) => <Card entry={e} />)}</ul>}
     {guides.length > 0 && <ul class="cards">{guides.map((e) => <Card entry={e} />)}</ul>}
     {planPages.length > 0 && <ul class="cards">{planPages.map((e) => <Card entry={e} />)}</ul>}
 
     {d.faq.length > 0 && (
-      <section>
+      <section class="faq">
         <h2>{t.faq}</h2>
         {faqGroups.map(([group, items]) => (
           <>
             {group && <h3>{group}</h3>}
-            {items.map((f) => (<details open><summary><strong>{f.q}</strong></summary><p>{f.a}</p></details>))}
+            {items.map((f) => (<details><summary><strong>{f.q}</strong></summary><p>{f.a}</p></details>))}
           </>
         ))}
       </section>
@@ -116,5 +139,13 @@ const linkedExperiences = await resolve(area?.experiences ?? []);
 
     {related.length > 0 && (<><h2>{t.related}</h2><ul class="cards">{related.map((e) => <Card entry={e} />)}</ul></>)}
   </article>
-  {showCta && <Cta lang={lang} bookUrl={bookUrl} />}
+  {showCta && <Cta slot="after" lang={lang} bookUrl={bookUrl} />}
 </Base>
+
+<style>
+  .lists { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); gap: 0 40px; margin: 16px 0 32px; }
+  .lists h2 { font-size: 18px; margin: 32px 0 12px; padding-bottom: 10px; border-bottom: 3px solid var(--ink); }
+  .lists ul { margin: 0; padding-left: 1.2em; }
+  .lists li { margin: 6px 0; }
+  .lists li::marker { color: var(--accent); }
+</style>

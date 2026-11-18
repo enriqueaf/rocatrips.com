@@ -7,6 +7,7 @@ h1: Beginner rock climbing day in Tenerife
 navLabel: Beginner climbing day
 description: Try outdoor rock climbing in Tenerife with no experience needed. Guided half day on volcanic rock in the south of the island. All gear included.
 summary: A half-day introduction to outdoor rock climbing in Tenerife for complete beginners. Your guide teaches you the basics, sets up safe top-ropes and helps you climb several routes on real volcanic rock.
+groupSize: Max 2 climbers per guide
 level: beginner
 duration: Half day (about 4 hours)
 durationISO: PT4H
@@ -42,6 +43,12 @@ faq:
   - q: What happens if the weather is bad?
     a: Rain is rare in the south of Tenerife. If conditions are unsafe, we move to a better crag, reschedule, or refund you (see our cancellation policy).
 ---
+
+## What it feels like
+
+Most people arrive a little nervous and leave asking when they can come back. Your first moves feel strange: the rope tugging gently at your harness, the rough volcanic rock under your fingers, and the ground slowly getting further away. Your guide talks you through every step, from where to put your feet to when to trust the rope and lean back. Then, somewhere on the second or third route, it clicks. You stop gripping and start climbing, and the view across the south of Tenerife is your reward at the top.
+
+**You're safe the whole time.** You climb on top-rope, so the rope is anchored above you and catches you straight away if you slip. Your guide fits your harness and helmet, checks every knot, and belays or supervises every climb.
 
 ## What you'll do
 

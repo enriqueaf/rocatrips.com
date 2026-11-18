@@ -10,6 +10,10 @@ export const localeNames: Record<Locale, string> = {
 
 export const ui = {
   en: {
+    menu: 'Menu',
+    bannerTitle: 'Climb on volcanic rock',
+    bannerText: 'From the sunny gorges of Arico to the lava fields beneath Mount Teide: over 1,300 bolted routes, climbable all year.',
+    bannerButton: 'Explore climbing areas',
     book: 'Book now',
     requirements: 'Requirements',
     ctaTitle: 'Want to climb in Tenerife?',
@@ -34,6 +38,10 @@ export const ui = {
     priceOnRequest: 'Price on request',
   },
   es: {
+    menu: 'Menú',
+    bannerTitle: 'Escala en roca volcánica',
+    bannerText: 'Desde los barrancos soleados de Arico hasta las coladas de lava bajo el Teide: más de 1.300 vías equipadas, todo el año.',
+    bannerButton: 'Ver zonas de escalada',
     book: 'Reservar',
     requirements: 'Requisitos',
     ctaTitle: '¿Quieres escalar en Tenerife?',
@@ -58,6 +66,10 @@ export const ui = {
     priceOnRequest: 'Precio a consultar',
   },
   de: {
+    menu: 'Menü',
+    bannerTitle: 'Klettern auf Vulkangestein',
+    bannerText: 'Von den sonnigen Schluchten von Arico bis zu den Lavafeldern unter dem Teide: über 1.300 eingebohrte Routen, das ganze Jahr.',
+    bannerButton: 'Klettergebiete entdecken',
     book: 'Jetzt buchen',
     requirements: 'Voraussetzungen',
     ctaTitle: 'Klettern auf Teneriffa?',

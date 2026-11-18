@@ -27,7 +27,7 @@ export function cleanBody(md = ''): string {
     .filter((l) => !/TODO/i.test(l))
     .join('\n')
     .replace(/\]\(\//g, `](${site.url}/`)
-    .replace(/^(#{1,6} .+)\n+(?=#{1,6} |\s*$)/gm, '') // drop headings left with no content
+    .replace(/^(#{1,6} .+)\n+(?=#{1,6} |\s*(?![\s\S]))/gm, '') // drop headings left with no content (next is a heading or end of text)
     .replace(/\n{3,}/g, '\n\n')
     .trim();
 }

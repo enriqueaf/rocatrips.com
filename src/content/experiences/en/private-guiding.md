@@ -7,6 +7,7 @@ h1: Private climbing guide in Tenerife
 navLabel: Private guiding
 description: Hire a private climbing guide in Tenerife for a day or a full climbing week. Tailored to your level, goals and dates. Couples, families, teams and groups.
 summary: A private guide for your group alone, with the day or week built around your level and goals. It can be a first climb, coaching on a project, trad or multi-pitch, Teide National Park, or a full climbing week.
+groupSize: Max 2 climbers per guide
 level: all
 duration: Half day, full day or multi-day
 season: All year
@@ -25,10 +26,14 @@ order: 4
 updated: 2026-11-17
 faq:
   - q: How many people can join a private day?
-    a: Tell us your group size when you ask. We adjust the guide-to-climber ratio so everyone climbs plenty, safely.
+    a: We never take more than two climbers per guide. Tell us your group size when you ask and we'll tell you how we can organise it.
   - q: Can you plan a whole climbing week?
     a: Yes. We can combine guided days, coaching, a Teide day and independent days with a crag plan for the days you climb on your own.
 ---
+
+## What it feels like
+
+Just you, your people and a guide who's paying attention to nobody else. The day bends around you: an extra route when you're flying, a long lunch in the shade when it's hot, a harder line when you're ready to try it. It's the most personal way to climb in Tenerife.
 
 ## Ideas for a private day or week
 

@@ -8,7 +8,7 @@
     "build": "astro build",
     "preview": "astro preview",
     "check": "astro check",
-    "deploy": "astro build && wrangler pages deploy dist --project-name rocatrips",
+    "deploy": "astro build && wrangler deploy",
     "todos": "grep -rn TODO src/content src/site.config.ts"
   },
   "dependencies": {
@@ -17,5 +17,8 @@
   },
   "engines": {
     "node": ">=22"
+  },
+  "devDependencies": {
+    "wrangler": "^4.164.0"
   }
 }

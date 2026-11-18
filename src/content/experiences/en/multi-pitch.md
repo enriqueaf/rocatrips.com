@@ -7,6 +7,7 @@ h1: Guided multi-pitch climbing in Tenerife
 navLabel: Multi-pitch climbing
 description: Guided multi-pitch rock climbing in Tenerife on long volcanic walls such as Guaria. For experienced climbers. Permits, gear and route choice handled.
 summary: A guided day on Tenerife's longest routes, such as the walls of Guaria, for experienced climbers. We handle the permit, the route choice and the rope work, and you enjoy the exposure.
+groupSize: Max 2 climbers per guide
 level: advanced
 duration: Full day (about 6–8 hours including approach)
 season: October to May (summer by arrangement, with early starts)
@@ -16,7 +17,7 @@ requirements:
   - Experience belaying, and comfortable with height and exposure
   - Fit enough for a full mountain day
 includes:
-  - Local guide with experience of long routes in Tenerife
+  - TD3-qualified guide with experience of long routes in Tenerife and beyond
   - All technical gear (ropes, rack, quickdraws, helmet, harness)
   - Climbing permit where required (e.g. Guaria)
   - Instruction on multi-pitch rope work, belays and abseils if you want it
@@ -36,6 +37,12 @@ faq:
   - q: Can I learn to lead multi-pitch myself?
     a: Yes. Choose the instruction option or a private course, and we'll teach you anchors, changeovers and abseils on the route.
 ---
+
+## What it feels like
+
+Multi-pitch is climbing's big adventure. Somewhere around the third pitch the ground drops away, the belay ledge becomes your whole world, and all you can hear is the wind and the clink of the rack. You have air under your heels, the coast far below and a team you trust completely. Topping out after a long route on Guaria's volcanic wall is one of the best feelings in Tenerife climbing.
+
+**Long routes need experience.** Our lead guide is a Técnico Deportivo Superior en Escalada (TD3) who has climbed long adventure routes from Yosemite to Kyrgyzstan. It's always two climbers per guide at most, so you're never left waiting on a crowded belay. Every anchor and abseil is set up with a backup.
 
 ## The routes
 

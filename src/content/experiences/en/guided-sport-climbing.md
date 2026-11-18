@@ -7,6 +7,7 @@ h1: Guided sport climbing day in Tenerife
 navLabel: Guided sport climbing
 description: Climb Tenerife's best bolted sport routes with a local guide. For climbers who already climb indoors or outdoors. Crag choice, logistics and gear included.
 summary: A guided day on Tenerife's best sport routes for people who already climb. Your guide picks the crags and routes for your level and the conditions, so you spend the day climbing, not searching for topos and parking.
+groupSize: Max 2 climbers per guide
 level: intermediate
 duration: Half day (about 4 hours) or full day (about 7 hours)
 season: All year (crag chosen by sun, shade and wind)
@@ -36,6 +37,10 @@ faq:
   - q: Can we climb a specific route or project?
     a: Yes. Tell us when booking and we'll plan the day around it.
 ---
+
+## What it feels like
+
+A holiday climbing day the way it should be. There's no circling for parking, no squinting at an old topo, and no warm-up wall that turns out to be in full sun. You walk in, the rope is flaked out, and the first route is waiting. The rock is unlike anything at home: sharp edges, pockets and long sustained walls that reward precise feet. By the last route you're climbing it like a local.
 
 ## How the day works
 

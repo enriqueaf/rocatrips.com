@@ -1,6 +1,6 @@
 # Rocatrips
 
-Static website for Rocatrips, guided rock climbing in Tenerife. Built with [Astro](https://astro.build), hosted on Cloudflare Pages, with bookings through Kinecall.
+Static website for Rocatrips, guided rock climbing in Tenerife. Built with [Astro](https://astro.build), hosted on Cloudflare Workers (static assets), with bookings through Kinecall.
 
 The full information architecture and SEO strategy are in [docs/information-architecture.md](docs/information-architecture.md).
 
@@ -57,12 +57,19 @@ Anything containing `TODO` is left out of these files automatically, so placehol
 - Zero client-side JavaScript: all content is in the HTML, which matters for AI crawlers that don't run JS
 - Booking links carry UTM tags (`utm_campaign` = the page's translationKey)
 
-## Deploying to Cloudflare Pages (free)
+## Deploying to Cloudflare Workers (free)
 
-1. Push this repo to GitHub.
-2. In Cloudflare: Workers & Pages → Create → Pages → Connect to Git.
-3. Framework preset **Astro**, build command `npm run build`, output directory `dist`.
-4. Add the custom domain (rocatrips.com).
-5. **Important:** check Cloudflare's *AI Crawl Control* settings. Cloudflare can block AI crawlers by default, which would undo the `robots.txt` above.
+Every push or merge to `main` deploys the site to production through GitHub Actions ([.github/workflows/deploy.yml](.github/workflows/deploy.yml)): `npm ci`, `npm run build`, then `wrangler deploy`. You can also start a deploy by hand from the Actions tab.
 
-`public/_headers` and `public/_redirects` hold Cloudflare's header and redirect rules.
+The site is a static-assets-only Worker ([wrangler.jsonc](wrangler.jsonc)) with no Worker script, so it runs on the **Workers Free plan**: requests for static assets are free and unlimited.
+
+One-time setup:
+
+1. In Cloudflare, create an API token from the **Edit Cloudflare Workers** template.
+2. In GitHub: Settings → Secrets and variables → Actions, add `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` (shown on the Workers & Pages overview).
+3. After the first deploy, add the custom domain: Workers & Pages → rocatrips → Settings → Domains & Routes → add `rocatrips.com`.
+4. **Important:** check Cloudflare's *AI Crawl Control* settings. Cloudflare can block AI crawlers by default, which would undo the `robots.txt` above.
+
+To deploy from your machine instead, run `npm run deploy` (asks you to log in with `npx wrangler login` the first time).
+
+`public/_headers` and `public/_redirects` hold the header and redirect rules; Workers static assets applies them the same way Pages did.

@@ -1,0 +1,15 @@
+// Cloudflare Workers config: static assets only, no Worker script.
+// Asset requests on an assets-only Worker are free and unmetered on the Workers Free plan.
+// public/_headers and public/_redirects are copied into dist/ and applied by Workers too.
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "rocatrips",
+  "compatibility_date": "2026-11-01",
+  "assets": {
+    "directory": "./dist",
+    // Matches Astro's trailingSlash: 'always' + build.format: 'directory'
+    "html_handling": "auto-trailing-slash",
+    // Serve dist/404.html with a 404 status for unknown URLs
+    "not_found_handling": "404-page"
+  }
+}

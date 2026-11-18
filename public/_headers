@@ -1,4 +1,4 @@
-# Cloudflare Pages headers
+# Cloudflare headers (Workers static assets)
 /*
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin

@@ -7,6 +7,7 @@ h1: Family and kids climbing in Tenerife
 navLabel: Families & kids
 description: A safe, fun outdoor climbing session in Tenerife for families with children. Easy routes, patient guides, all equipment included. A great holiday activity.
 summary: An outdoor climbing session built around families, with easy, short routes, games and a patient guide. All the gear is included, adults climb too, and it's a great active day out during a Tenerife holiday.
+groupSize: Max 2 climbers per guide
 level: beginner
 duration: About 3 hours
 durationISO: PT3H
@@ -36,6 +37,12 @@ faq:
     a: Children climb on top-rope, wear helmets, and are belayed or supervised by the guide at all times. We choose family-friendly crags with flat, safe bases.
 ---
 
+## What it feels like
+
+Kids usually race up the first route and then turn around, amazed at how high they are. Parents are more often the nervous ones, until they're climbing too. It's a morning of cheering each other on, small victories and big smiles, in a sunny gorge with nobody's phone in sight.
+
+**Safety is built in.** Children wear helmets, climb on top-rope and are belayed or supervised by the guide at all times. We choose crags with flat, safe bases, so the little ones waiting their turn are safe too.
+
 ## What you'll do
 
 Short, easy routes on a family-friendly crag with a safe base, such as [Tamadaya](/climbing-areas/tamadaya/). Kids learn to tie in and climb, with games and challenges along the way, and the adults can climb and learn to belay.
@@ -43,5 +50,5 @@ Short, easy routes on a family-friendly crag with a safe base, such as [Tamadaya
 ## Good to know
 
 - Sessions are timed to avoid the midday heat.
-- We keep the group small so every child gets plenty of turns.
+- There are never more than two climbers per guide, so every child gets plenty of turns and close attention.
 - Want just your family? Book a [private session](/climbing-tenerife/private-guiding/).

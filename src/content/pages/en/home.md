@@ -30,9 +30,10 @@ Rocatrips is a local climbing guide service in Tenerife. We take complete beginn
 
 ## Why climb with Rocatrips?
 
-- **Local knowledge.** We choose the crag every day for your level, the sun, the wind and the crowds.
+- **A top-qualified guide.** Led by Pablo Vicens, Técnico Deportivo Superior en Escalada (TD3), with more than ten years of professional guiding. See [our story](/about/).
+- **Never more than two climbers per guide.** Every knot and belay is checked by your guide, every climber wears a helmet, and we're fully insured. See [our safety standards](/plan-your-trip/safety-and-guides/).
+- **The right crag, every day.** Chosen for your level, the sun, the wind and the crowds.
 - **Everything included.** Gear, permits where needed, and a plan.
-- **Small groups** and patient, safety-first instruction.
 - **A resource, not just a booking.** Our free guides to [climbing areas](/climbing-areas/), [the best time to climb](/plan-your-trip/best-time-to-climb-tenerife/), [permits](/plan-your-trip/climbing-rules-and-access/) and [where to stay](/plan-your-trip/where-to-stay/) help you plan your whole trip.
 
 ## Choose your experience

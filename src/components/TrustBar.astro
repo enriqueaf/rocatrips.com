@@ -1,0 +1,60 @@
+---
+// The "why climb with us" proof strip. Facts come only from site.config.ts →
+// trust, so every page states the same numbers. Unconfirmed facts are omitted
+// in the build and shown as TODO in dev.
+import { site } from '../site.config';
+import type { Locale } from '../i18n';
+
+interface Props { lang: Locale; }
+const { lang } = Astro.props;
+const t = site.trust;
+const years = t.guidingSince ? new Date().getFullYear() - t.guidingSince : null;
+
+const L = {
+  en: {
+    qual: 'Técnico Deportivo Superior en Escalada (TD3)', years: (n: number) => `${n} years of professional guiding`,
+    ratio: (n: number) => `Max ${n} climbers per guide`, insured: 'Liability and accident insurance',
+    reg: 'Registered active-tourism company', firstAid: 'First-aid certified guide',
+    guided: (n: string) => `${n} climbers guided`, aria: 'Why climb with Rocatrips',
+  },
+  es: {
+    qual: 'Técnico Deportivo Superior en Escalada (TD3)', years: (n: number) => `${n} años como guía profesional`,
+    ratio: (n: number) => `Máximo ${n} escaladores por guía`, insured: 'Seguro de responsabilidad civil y de accidentes',
+    reg: 'Empresa de turismo activo registrada', firstAid: 'Guía con titulación en primeros auxilios',
+    guided: (n: string) => `${n} escaladores guiados`, aria: 'Por qué escalar con Rocatrips',
+  },
+  de: {
+    qual: 'Staatlich geprüfter Kletterführer (TD3, Spanien)', years: (n: number) => `${n} Jahre Erfahrung als Kletterführer`,
+    ratio: (n: number) => `Max. ${n} Kletterer pro Guide`, insured: 'Haftpflicht- und Unfallversicherung',
+    reg: 'Registrierter Aktivtourismus-Anbieter', firstAid: 'Guide mit Erste-Hilfe-Zertifikat',
+    guided: (n: string) => `${n} geführte Kletterer`, aria: 'Warum mit Rocatrips klettern',
+  },
+}[lang];
+
+// [text, todo hint]: text is empty when the fact isn't confirmed yet.
+const items: [string, string][] = [
+  [t.qualification ? L.qual : '', 'guide qualification'],
+  [years ? L.years(years) : '', 'guiding since'],
+  [t.maxClimbersPerGuide ? L.ratio(t.maxClimbersPerGuide) : '', 'climbers per guide'],
+  [t.insured ? L.insured : '', 'insurance'],
+  [t.activeTourismRegistered ? L.reg : '', 'active-tourism registration'],
+  [t.firstAid ? L.firstAid : '', 'first aid'],
+  [t.climbersGuided ? L.guided(t.climbersGuided) : '', 'climbers guided'],
+];
+const dev = import.meta.env.DEV;
+const shown = items.filter(([text]) => text || dev);
+---
+
+{shown.length > 0 && (
+  <ul class="trust" aria-label={L.aria}>
+    {shown.map(([text, hint]) => text ? <li>{text}</li> : <li class="todo">TODO: {hint} (site.config.ts → trust)</li>)}
+  </ul>
+)}
+
+<style>
+  .trust { display: flex; flex-wrap: wrap; gap: 1px; padding: 0; margin: 0 0 40px; list-style: none; background: var(--surface); border: 1px solid var(--line); box-shadow: inset 0 0 0 1px var(--surface); }
+  .trust li { outline: 1px solid var(--line); }
+  .trust li { flex: 1 1 220px; display: flex; gap: 10px; align-items: flex-start; font: 700 13px/1.35 var(--font); letter-spacing: 0.04em; text-transform: uppercase; padding: 16px 18px; background: var(--surface); }
+  .trust li::before { content: ''; flex: none; width: 14px; height: 8px; margin-top: 3px; border: solid var(--accent); border-width: 0 0 3px 3px; transform: rotate(-45deg); }
+  .trust li.todo::before { display: none; }
+</style>
