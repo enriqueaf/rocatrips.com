@@ -1,5 +1,7 @@
 # Cloudflare redirects (Workers static assets). Format: /from /to 301
 # Short marketing URLs
 /book-now /book/ 301
-/es /es/ 301
-/de /de/ 301
+# Re-enable when the Spanish/German home pages are published (draft: false);
+# until then /es/ and /de/ don't exist and these would redirect to a 404.
+# /es /es/ 301
+# /de /de/ 301
