@@ -20,7 +20,7 @@
 
 # Markdown twins of each page: canonical points back to the HTML page.
 # :splat is the folder path, e.g. /climbing-tenerife/beginners/index.md → climbing-tenerife/beginners/
-# TODO after first deploy: verify with `curl -I https://rocatrips.com/climbing-tenerife/beginners/index.md`
+# TODO after first deploy: verify with `curl -I https://rocatrips.enriqueaf.workers.dev/climbing-tenerife/beginners/index.md`
 /*index.md
   Content-Type: text/markdown; charset=utf-8
-  Link: <https://rocatrips.com/:splat>; rel="canonical"
+  Link: <https://rocatrips.enriqueaf.workers.dev/:splat>; rel="canonical"

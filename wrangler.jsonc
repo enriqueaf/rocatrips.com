@@ -5,11 +5,9 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "rocatrips",
   "compatibility_date": "2026-11-01",
-  // Custom domain: wrangler deploy creates the DNS record and certificate.
-  // Requires the rocatrips.com zone to be on the same Cloudflare account.
-  "routes": [
-    { "pattern": "rocatrips.com", "zone_name": "rocatrips.com", "custom_domain": true }
-  ],
+  // Served at https://rocatrips.enriqueaf.workers.dev for now. When rocatrips.com is on
+  // Cloudflare, add: "routes": [{ "pattern": "rocatrips.com", "zone_name": "rocatrips.com", "custom_domain": true }]
+  "workers_dev": true,
   "assets": {
     "directory": "./dist",
     // Matches Astro's trailingSlash: 'always' + build.format: 'directory'

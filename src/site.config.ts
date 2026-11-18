@@ -3,7 +3,7 @@
 // matters for both Google and AI assistants).
 export const site = {
   name: 'Rocatrips',
-  url: 'https://rocatrips.com', // TODO: confirm domain
+  url: 'https://rocatrips.enriqueaf.workers.dev', // TODO: switch to https://rocatrips.com when the domain is added
   tagline: 'Guided rock climbing in Tenerife',
   description:
     'Small-group guided rock climbing days, courses and multi-pitch routes in Tenerife, Canary Islands. Gear included, all levels.',

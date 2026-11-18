@@ -38,4 +38,4 @@ Allow: /
 User-agent: Bingbot
 Allow: /
 
-Sitemap: https://rocatrips.com/sitemap-index.xml
+Sitemap: https://rocatrips.enriqueaf.workers.dev/sitemap-index.xml

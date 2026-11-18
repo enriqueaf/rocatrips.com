@@ -69,7 +69,7 @@ One-time setup:
 
 1. In Cloudflare, create an API token from the **Edit Cloudflare Workers** template.
 2. In GitHub: Settings → Secrets and variables → Actions, add `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` (shown on the Workers & Pages overview).
-3. After the first deploy, add the custom domain: Workers & Pages → rocatrips → Settings → Domains & Routes → add `rocatrips.com`.
+3. The site is live at https://rocatrips.enriqueaf.workers.dev. When rocatrips.com is added to Cloudflare, add the `routes` entry noted in `wrangler.jsonc`, then change the URL in `astro.config.mjs`, `src/site.config.ts`, `public/_headers` and `public/robots.txt`.
 4. **Important:** check Cloudflare's *AI Crawl Control* settings. Cloudflare can block AI crawlers by default, which would undo the `robots.txt` above.
 
 To deploy from your machine instead, run `npm run deploy` (asks you to log in with `npx wrangler login` the first time).
