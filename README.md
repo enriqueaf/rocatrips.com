@@ -13,6 +13,8 @@ The full information architecture and SEO strategy are in [docs/information-arch
 | `npm run build` | Build the static site to `dist/` (drafts excluded) |
 | `npm run preview` | Preview the production build |
 | `npm run todos` | List every content gap still marked TODO |
+| `npm run verify` | Type-check, build and test. Run before pushing |
+| `npm test` | Test the built site in `dist/` ([tests/site.test.mjs](tests/site.test.mjs)): links, images and alt text, SEO tags, JSON-LD, sitemap, redirects, Markdown twins, home sections |
 
 ## How the site is organised
 
@@ -59,7 +61,7 @@ Anything containing `TODO` is left out of these files automatically, so placehol
 
 ## Deploying to Cloudflare Workers (free)
 
-Every push or merge to `main` deploys the site to production through GitHub Actions ([.github/workflows/deploy.yml](.github/workflows/deploy.yml)): `npm ci`, `npm run build`, then `wrangler deploy`. You can also start a deploy by hand from the Actions tab.
+Every push or merge to `main` deploys the site to production through GitHub Actions ([.github/workflows/deploy.yml](.github/workflows/deploy.yml)): `npm ci`, `astro check`, `npm run build`, `npm test`, then `wrangler deploy`. If any check fails, nothing is deployed. Pull requests run the same checks without deploying. You can also start a deploy by hand from the Actions tab.
 
 The site is a static-assets-only Worker ([wrangler.jsonc](wrangler.jsonc)) with no Worker script, so it runs on the **Workers Free plan**: requests for static assets are free and unlimited.
 

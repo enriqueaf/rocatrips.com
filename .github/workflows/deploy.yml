@@ -1,18 +1,18 @@
-name: Deploy to Cloudflare Workers
+name: Test and deploy
 
 on:
   push:
     branches: [main]
+  pull_request:
   workflow_dispatch:
 
 concurrency:
-  group: deploy-production
+  group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  deploy:
+  test:
     runs-on: ubuntu-latest
-    environment: production
     permissions:
       contents: read
     steps:
@@ -25,7 +25,43 @@ jobs:
 
       - run: npm ci
 
+      # Type-check .astro/.ts files and validate content frontmatter
+      - run: npx astro check
+
       - run: npm run build
+
+      # Checks on the built site: links, images, SEO tags, sitemap, Markdown twins
+      - run: npm test
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist
+          include-hidden-files: true
+          retention-days: 3
+
+  # Deploys exactly the build that passed the tests. Main only, never PRs.
+  deploy:
+    needs: test
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: production # holds CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist
 
       - name: Deploy
         uses: cloudflare/wrangler-action@v3

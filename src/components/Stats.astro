@@ -1,0 +1,24 @@
+---
+// Black band of big numbers under the home hero.
+interface Props { stats: { value: string; label: string }[]; }
+const { stats } = Astro.props;
+---
+
+<section class="stats" aria-label="Rocatrips in numbers">
+  <ul class="wrap">
+    {stats.map((s) => <li><strong>{s.value}</strong><span>{s.label}</span></li>)}
+  </ul>
+</section>
+
+<style>
+  .stats { background: var(--ink); color: #fff; border-top: 4px solid var(--accent); }
+  ul { display: grid; grid-template-columns: repeat(4, 1fr); margin: 0 auto; padding-block: clamp(28px, 4vw, 48px); list-style: none; }
+  li { display: flex; flex-direction: column; gap: 8px; padding: 4px 24px; border-left: 1px solid #2a2c31; }
+  li:first-child { border-left: 0; padding-left: 0; }
+  strong { font: 900 clamp(36px, 4.6vw, 64px)/0.95 var(--font); font-stretch: 125%; letter-spacing: -0.01em; }
+  span { font: 700 12px/1.35 var(--font); letter-spacing: 0.12em; text-transform: uppercase; color: #b9bcc2; max-width: 18ch; }
+  @media (max-width: 760px) {
+    ul { grid-template-columns: 1fr 1fr; row-gap: 28px; }
+    li:nth-child(odd) { border-left: 0; padding-left: 0; }
+  }
+</style>

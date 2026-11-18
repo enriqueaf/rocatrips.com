@@ -28,6 +28,20 @@ const pages = defineCollection({
     template: z.enum(['home', 'experiences-hub', 'areas-hub', 'plan-hub', 'guides-hub', 'basic']).default('basic'),
     cta: z.boolean().default(true), // show the "climb with Rocatrips" block
     image: z.string().optional(), // photo name in src/assets/photos (see src/lib/images.ts)
+    // Home-style visual sections. Also emitted in the Markdown twin, so keep the
+    // wording self-contained (no links inside `text`; use `href`).
+    stats: z.array(z.object({ value: z.string(), label: z.string() })).default([]),
+    sections: z
+      .array(
+        z.object({
+          id: z.string(), // where the template places it: 'tenerife' | 'why-us'
+          heading: z.string(),
+          intro: z.string().optional(),
+          items: z.array(z.object({ title: z.string(), text: z.string(), image: z.string().optional(), href: z.string().optional() })),
+          link: z.object({ label: z.string(), href: z.string() }).optional(),
+        }),
+      )
+      .default([]),
   }),
 });
 
@@ -49,7 +63,7 @@ const experiences = defineCollection({
     bring: z.array(z.string()).default([]),
     areas: z.array(z.string()).default([]), // area translationKeys
     related: z.array(z.string()).default([]), // experience translationKeys
-    kinecallUrl: z.string().url().optional(), // deep link; falls back to site default
+    kinecallUrl: z.url().optional(), // deep link; falls back to site default
     image: z.string().optional(), // TODO: hero photo path once photos arrive
   }),
 });
@@ -70,7 +84,7 @@ const areas = defineCollection({
     bestSeason: z.string().optional(),
     access: z.string().optional(), // permits / restrictions
     geo: z.object({ lat: z.number(), lng: z.number() }).optional(),
-    links: z.array(z.object({ label: z.string(), url: z.string().url() })).default([]),
+    links: z.array(z.object({ label: z.string(), url: z.url() })).default([]),
     experiences: z.array(z.string()).default([]),
     image: z.string().optional(),
   }),

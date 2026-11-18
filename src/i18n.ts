@@ -10,6 +10,8 @@ export const localeNames: Record<Locale, string> = {
 
 export const ui = {
   en: {
+    promoTitle: 'Not sure where to start?',
+    promoText: 'Tell us your level and your dates. We\'ll plan the right day for you.',
     menu: 'Menu',
     bannerTitle: 'Climb on volcanic rock',
     bannerText: 'From the sunny gorges of Arico to the lava fields beneath Mount Teide: over 1,300 bolted routes, climbable all year.',
@@ -38,6 +40,8 @@ export const ui = {
     priceOnRequest: 'Price on request',
   },
   es: {
+    promoTitle: '¿No sabes por dónde empezar?',
+    promoText: 'Cuéntanos tu nivel y tus fechas. Te preparamos el día perfecto.',
     menu: 'Menú',
     bannerTitle: 'Escala en roca volcánica',
     bannerText: 'Desde los barrancos soleados de Arico hasta las coladas de lava bajo el Teide: más de 1.300 vías equipadas, todo el año.',
@@ -66,6 +70,8 @@ export const ui = {
     priceOnRequest: 'Precio a consultar',
   },
   de: {
+    promoTitle: 'Unsicher, was passt?',
+    promoText: 'Nenn uns dein Niveau und deine Daten. Wir planen den passenden Tag.',
     menu: 'Menü',
     bannerTitle: 'Klettern auf Vulkangestein',
     bannerText: 'Von den sonnigen Schluchten von Arico bis zu den Lavafeldern unter dem Teide: über 1.300 eingebohrte Routen, das ganze Jahr.',

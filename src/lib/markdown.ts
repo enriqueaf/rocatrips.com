@@ -87,7 +87,19 @@ export async function entryToMarkdown(entry: AnyEntry, { level = 1 } = {}): Prom
 
   let body = cleanBody(entry.body);
   if (level > 1) body = body.replace(/^(#{1,6}) /gm, (_, hs: string) => `${'#'.repeat(Math.min(hs.length + level - 1, 6))} `);
+  if (entry.collection === 'pages' && entry.data.stats.length) {
+    out.push(...entry.data.stats.map((st) => `- **${st.value}** ${st.label.toLowerCase()}`), '');
+  }
+
   if (body) out.push(body, '');
+
+  if (entry.collection === 'pages') {
+    for (const sec of entry.data.sections) {
+      out.push(`${h(2)} ${sec.heading}`, '');
+      if (ok(sec.intro)) out.push(sec.intro, '');
+      out.push(...sec.items.map((i) => `- **${i.title}.** ${i.text}${i.href ? ` [More](${abs(i.href)})` : ''}`), '');
+    }
+  }
 
   if (entry.collection === 'areas' && entry.data.links.length) {
     out.push(`${h(2)} Topos and references`, '', ...entry.data.links.map((l) => `- [${l.label}](${l.url})`), '');
