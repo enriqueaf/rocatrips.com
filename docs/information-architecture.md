@@ -61,10 +61,10 @@ Languages: EN (default, `/`), ES (`/es/`), DE (`/de/`). Add FR/NL/SV later based
   /climbing-tenerife/courses/              Lead, safety, technique courses
   /climbing-tenerife/families-kids/        Families and groups (kids climbing)
   (later) /bouldering/ /deep-water-soloing/ /canyoning/ /climbing-week/
-/climbing-areas/                    Hub: crag guide (our own editorial)
+/climbing-areas/                    Crag table + area guides (linked from the Plan your trip hub)
   /climbing-areas/arico/
   /climbing-areas/<other-area>/     one page per area we actually guide in
-/plan-your-trip/
+/plan-your-trip/                    Hub (nav: "Plan your trip"): areas, practical topics and guides in one page
   /plan-your-trip/best-time-to-climb-tenerife/
   /plan-your-trip/grades-and-levels/        What 5c/6a means, which experience fits
   /plan-your-trip/what-to-bring/
@@ -72,15 +72,17 @@ Languages: EN (default, `/`), ES (`/es/`), DE (`/de/`). Add FR/NL/SV later based
   /plan-your-trip/safety-and-guides/        Certifications, insurance, group size, ratios
   /plan-your-trip/climbing-rules-and-access/ Permits, restricted areas, ethics
   /plan-your-trip/where-to-stay/
-/guides/                            Blog / long-form (see §6)
+/guides/<slug>/                     Long-form articles (see §6); /guides/ itself 301s to /plan-your-trip/
 /about/                             Team, guide qualifications, story
 /gallery/                           Photos (reuses the same image set)
 /reviews/                           Testimonials (+ Tripadvisor/Google links)
 /faq/                               Global FAQ
-/contact/
+/contact/                           Linked from the footer, not the main nav
 /book/                              Entry to Kinecall (per-experience deep links preferred)
 /legal/ (privacy, terms, cancellation, cookies)
 ```
+
+Main nav: Experiences · Plan your trip · About (+ Book). Climbing areas and Guides are merged into Plan your trip; Contact lives in the footer.
 
 Depth rule: no page is more than 3 clicks from home, and every experience has exactly one canonical URL (avoid Ocho's duplicate-page problem).
 

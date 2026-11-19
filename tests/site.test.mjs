@@ -32,7 +32,7 @@ test('every page has the basic SEO tags', () => {
   for (const f of contentPages) {
     const html = read(f);
     const where = url(f);
-    assert.match(html, /<html lang="(en|es|de)"/, `${where}: <html lang>`);
+    assert.match(html, /<html[^>]* lang="(en|es|de)"/, `${where}: <html lang>`);
     assert.match(html, /<title>[^<]{10,}<\/title>/, `${where}: <title>`);
     assert.match(html, /<meta name="description" content="[^"]{30,}"/, `${where}: meta description`);
     assert.match(html, /<link rel="canonical" href="https:\/\/[^"]+\/"/, `${where}: canonical`);
@@ -159,13 +159,53 @@ test('Markdown tables are styled content, not raw pipes', () => {
 });
 
 test('page transitions are enabled', () => {
-  const css = files.filter((f) => f.endsWith('.css')).map(read).join('');
-  assert.match(css, /@view-transition\s*\{\s*navigation:\s*auto/, '@view-transition rule');
+  const html = read(join(DIST, 'index.html'));
+  assert.match(html, /<meta name="astro-view-transitions-enabled"/, 'ClientRouter in <head>');
+  assert.match(html, /<html[^>]*data-astro-transition-scope=/, 'root page transition');
 });
 
 test('Book links go to Kinecall and FAQ accordions animate', () => {
   const html = read(join(DIST, 'index.html'));
   assert.match(html, /href="https:\/\/rocatrips-9-dtg\.kinecall\.com\/\?utm_source=rocatrips\.com/, 'Kinecall booking link');
-  const css = files.filter((f) => f.endsWith('.css')).map(read).join('');
-  assert.match(css, /::details-content/, 'accordion transition');
+  const js = files.filter((f) => f.endsWith('.js')).map(read).join('') + html;
+  assert.match(js, /\.faq summary/, 'accordion animation script');
+});
+
+const mainNavLinks = (html) => {
+  const menu = (html.match(/<nav class="menu"[^>]*aria-label="Main"[^>]*>([\s\S]*?)<\/nav>/)?.[1] ?? '').replace(/<div class="sub"[\s\S]*?<\/div>/g, '');
+  return [...menu.matchAll(/<li[^>]*><a href="([^"]+)"([^>]*)>/g)].map(([, href, attrs]) => ({ href, current: /aria-current/.test(attrs) }));
+};
+
+test('main nav merges areas and guides into Plan your trip; contact is in the footer', () => {
+  const html = read(join(DIST, 'index.html'));
+  assert.deepEqual(mainNavLinks(html).map((l) => l.href), ['/climbing-tenerife/', '/plan-your-trip/', '/about/']);
+  const footer = html.match(/<footer class="site-footer">([\s\S]*?)<\/footer>/)?.[1] ?? '';
+  assert.match(footer, /href="\/contact\/"/, 'footer links to contact');
+  assert.match(footer, /href="mailto:/, 'footer shows email');
+});
+
+test('Experiences has a submenu with "see all" and every experience', () => {
+  const html = read(join(DIST, 'index.html'));
+  const sub = html.match(/<div class="sub" id="sub-experiences"[^>]*>([\s\S]*?)<\/div>/)?.[1] ?? '';
+  assert.match(sub, /class="sub-back"/, 'back button');
+  assert.match(sub, /<a class="sub-all"[^>]*href="\/climbing-tenerife\/"/, 'see all link');
+  const links = [...sub.matchAll(/<li><a href="([^"]+)"/g)].map(([, h]) => h);
+  assert.ok(links.length >= 6, `expected 6+ experiences, found ${links.length}`);
+  assert.ok(links.includes('/climbing-tenerife/beginners/'), 'beginners in submenu');
+});
+
+test('Plan your trip hub lists areas, planning topics and guides', () => {
+  const html = read(join(DIST, 'plan-your-trip/index.html'));
+  for (const id of ['areas', 'planning', 'guides'])
+    assert.match(html, new RegExp(`<section[^>]*id="${id}"[^>]*>[\\s\\S]*?<ul class="cards"`), `#${id} section with cards`);
+  assert.match(html, /href="\/climbing-areas\/"/, 'links to the crag table');
+  assert.ok(!existsSync(join(DIST, 'guides/index.html')), '/guides/ hub removed');
+  assert.match(read(new URL('../public/_redirects', import.meta.url).pathname), /^\/guides\/ \/plan-your-trip\/ 301$/m);
+});
+
+test('area and guide pages highlight Plan your trip in the nav', () => {
+  for (const p of ['climbing-areas/index.html', 'climbing-areas/arico/index.html', 'guides/climbing-in-tenerife/index.html']) {
+    const current = mainNavLinks(read(join(DIST, p))).filter((l) => l.current).map((l) => l.href);
+    assert.deepEqual(current, ['/plan-your-trip/'], p);
+  }
 });

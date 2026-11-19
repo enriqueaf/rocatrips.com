@@ -10,6 +10,11 @@ export const localeNames: Record<Locale, string> = {
 
 export const ui = {
   en: {
+    hubAreas: 'Climbing areas',
+    hubAreasLink: 'Compare all crags',
+    hubPlan: 'Practical planning',
+    hubGuides: 'In-depth guides',
+    contactEmail: 'Email us',
     promoTitle: 'Not sure where to start?',
     promoText: 'Tell us your level and your dates. We\'ll plan the right day for you.',
     menu: 'Menu',
@@ -38,8 +43,15 @@ export const ui = {
     climbHere: 'Climb here with us',
     readMore: 'Read more',
     priceOnRequest: 'Price on request',
+    seeAllExperiences: 'See all experiences',
+    back: 'Back',
   },
   es: {
+    hubAreas: 'Zonas de escalada',
+    hubAreasLink: 'Comparar todas las zonas',
+    hubPlan: 'Información práctica',
+    hubGuides: 'Guías en profundidad',
+    contactEmail: 'Escríbenos',
     promoTitle: '¿No sabes por dónde empezar?',
     promoText: 'Cuéntanos tu nivel y tus fechas. Te preparamos el día perfecto.',
     menu: 'Menú',
@@ -68,8 +80,15 @@ export const ui = {
     climbHere: 'Escala aquí con nosotros',
     readMore: 'Leer más',
     priceOnRequest: 'Precio a consultar',
+    seeAllExperiences: 'Ver todas las actividades',
+    back: 'Atrás',
   },
   de: {
+    hubAreas: 'Klettergebiete',
+    hubAreasLink: 'Alle Gebiete vergleichen',
+    hubPlan: 'Praktische Planung',
+    hubGuides: 'Ausführliche Guides',
+    contactEmail: 'Schreib uns',
     promoTitle: 'Unsicher, was passt?',
     promoText: 'Nenn uns dein Niveau und deine Daten. Wir planen den passenden Tag.',
     menu: 'Menü',
@@ -98,6 +117,8 @@ export const ui = {
     climbHere: 'Hier mit uns klettern',
     readMore: 'Mehr lesen',
     priceOnRequest: 'Preis auf Anfrage',
+    seeAllExperiences: 'Alle Erlebnisse ansehen',
+    back: 'Zurück',
   },
 } satisfies Record<Locale, Record<string, string>>;
 
@@ -109,5 +130,5 @@ export const levelLabels: Record<Locale, Record<string, string>> = {
 
 // Main navigation, by translationKey. Links resolve to the page with that key in
 // the current language (falls back to English if it isn't translated yet).
-export const mainNav = ['experiences', 'areas', 'plan', 'guides', 'about', 'contact'] as const;
-export const footerNav = ['where-to-stay', 'shops', 'topos', 'access', 'costa-adeje', 'faq', 'reviews', 'gallery', 'book', 'privacy', 'terms', 'cancellation', 'cookies', 'legal-notice'] as const;
+export const mainNav = ['experiences', 'plan', 'about'] as const;
+export const footerNav = ['contact', 'where-to-stay', 'shops', 'topos', 'access', 'costa-adeje', 'faq', 'reviews', 'gallery', 'book', 'privacy', 'terms', 'cancellation', 'cookies', 'legal-notice'] as const;

@@ -49,8 +49,9 @@ const area = entry.collection === 'areas' ? entry.data : null;
 
 // Listings for hub templates
 const experiences = ['home', 'experiences-hub'].includes(template) ? await listing('experiences', lang) : [];
-const areas = template === 'areas-hub' ? await listing('areas', lang) : [];
-const guides = template === 'guides-hub' ? await listing('guides', lang) : [];
+const isPlanHub = template === 'plan-hub';
+const areas = template === 'areas-hub' || isPlanHub ? await listing('areas', lang) : [];
+const guides = isPlanHub ? await listing('guides', lang) : [];
 const planPages =
   template === 'plan-hub'
     ? (await listing('pages', lang)).filter((p) => p.data.path !== d.path && p.data.path.startsWith(d.path))
@@ -96,7 +97,7 @@ const facts: Fact[] = exp
       ]
     : [];
 const shownFacts = facts.filter(([, , v]) => v);
-const areasHub = isHome ? await byKey('areas', lang) : undefined;
+const areasHub = isHome || isPlanHub ? await byKey('areas', lang) : undefined;
 const lead = 'summary' in d && d.summary ? d.summary : isHome ? d.description : undefined;
 const eyebrow = exp ? `${levelLabels[lang][exp.level]} · ${exp.duration}` : area ? area.region : undefined;
 ---
@@ -161,12 +162,34 @@ const eyebrow = exp ? `${levelLabels[lang][exp.level]} · ${exp.duration}` : are
     )}
     {tenerife && <Tiles heading={tenerife.heading} items={tenerife.items} />}
     {whyUs && <Reasons heading={whyUs.heading} items={whyUs.items} link={whyUs.link} photo={photo('anaga-valley')} />}
-    {areasHub && (
+    {isHome && areasHub && (
       <Banner photo={photo('teide-roques-sunset')} title={t.bannerTitle} text={t.bannerText} href={areasHub.data.path} label={t.bannerButton} />
     )}
-    {areas.length > 0 && <ul class="cards">{areas.map((e) => <Card entry={e} />)}</ul>}
-    {guides.length > 0 && <ul class="cards">{guides.map((e) => <Card entry={e} />)}</ul>}
-    {planPages.length > 0 && <ul class="cards">{planPages.map((e) => <Card entry={e} />)}</ul>}
+    {isPlanHub ? (
+      <>
+        {areas.length > 0 && (
+          <section class="hub" id="areas">
+            <h2>{t.hubAreas}</h2>
+            <ul class="cards">{areas.map((e) => <Card entry={e} />)}</ul>
+            {areasHub && <p><a class="btn btn--ghost" href={areasHub.data.path}>{t.hubAreasLink}</a></p>}
+          </section>
+        )}
+        {planPages.length > 0 && (
+          <section class="hub" id="planning">
+            <h2>{t.hubPlan}</h2>
+            <ul class="cards">{planPages.map((e) => <Card entry={e} />)}</ul>
+          </section>
+        )}
+        {guides.length > 0 && (
+          <section class="hub" id="guides">
+            <h2>{t.hubGuides}</h2>
+            <ul class="cards">{guides.map((e) => <Card entry={e} />)}</ul>
+          </section>
+        )}
+      </>
+    ) : (
+      areas.length > 0 && <ul class="cards">{areas.map((e) => <Card entry={e} />)}</ul>
+    )}
 
     {d.faq.length > 0 && (
       <section class="faq">
@@ -186,6 +209,8 @@ const eyebrow = exp ? `${levelLabels[lang][exp.level]} · ${exp.duration}` : are
 </Base>
 
 <style>
+  .hub { margin-top: 56px; }
+  .hub > p { margin-top: 8px; }
   .lists { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); gap: 0 40px; margin: 16px 0 32px; }
   .lists h2 { font-size: 18px; margin: 32px 0 12px; padding-bottom: 10px; border-bottom: 3px solid var(--ink); }
   .lists ul { margin: 0; padding: 0; list-style: none; }

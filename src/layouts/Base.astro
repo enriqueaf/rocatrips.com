@@ -1,10 +1,14 @@
 ---
 import { site } from '../site.config';
 import { defaultLocale, localeNames, mainNav, footerNav, ui, type Locale } from '../i18n';
-import { byKey, translations, breadcrumbs, type AnyEntry } from '../lib/routes';
+import { byKey, translations, breadcrumbs, listing, type AnyEntry } from '../lib/routes';
 import { organization, breadcrumbList } from '../lib/schema';
 import { mdPath } from '../lib/markdown';
 import Icon from '../components/Icon.astro';
+import { ClientRouter, fade } from 'astro:transitions';
+
+// Page transition (Astro ClientRouter): a plain opacity crossfade, no movement.
+const pageAnim = fade({ duration: '0.45s' });
 
 interface Props {
   entry: AnyEntry;
@@ -24,17 +28,26 @@ const trail = await breadcrumbs(entry);
 const resolveNav = async (keys: readonly string[]) =>
   (await Promise.all(keys.map((k) => byKey(k, lang)))).filter((e): e is AnyEntry => !!e);
 const nav = await resolveNav(mainNav);
+// Submenus under main nav items, keyed by translationKey.
+const subNav: Record<string, AnyEntry[]> = { experiences: await listing('experiences', lang) };
 const footer = await resolveNav(footerNav);
 const homePath = lang === defaultLocale ? '/' : `/${lang}/`;
+// Areas and guides live outside /plan-your-trip/ but belong to that nav section.
+const navSection = entry.collection === 'areas' || entry.collection === 'guides' || d.translationKey === 'areas' ? 'plan' : null;
+const current = (n: AnyEntry) =>
+  d.path === n.data.path ? 'page' : d.path.startsWith(n.data.path) || n.data.translationKey === navSection ? 'true' : undefined;
+const phone = site.phone.replace(/\s/g, '');
+const whatsapp = site.whatsapp.replace(/\D/g, '');
 
 const jsonLd = [organization(), ...(trail.length > 1 ? [breadcrumbList(trail)] : []), ...schema];
 ---
 
 <!doctype html>
-<html lang={lang}>
+<html lang={lang} transition:animate={pageAnim}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <ClientRouter />
     <title>{d.title}</title>
     <meta name="description" content={d.description} />
     <link rel="canonical" href={canonical} />
@@ -111,6 +124,22 @@ const jsonLd = [organization(), ...(trail.length > 1 ? [breadcrumbList(trail)] :
       .menu ul a { color: #fff; text-decoration: none; font: 900 12px/1 var(--font); font-stretch: 125%; letter-spacing: 0.08em; text-transform: uppercase; padding: 8px 0; border-bottom: 2px solid transparent; }
       .menu ul a:hover, .menu ul a[aria-current] { border-color: var(--accent); }
       .menu .btn { padding: 11px 18px; }
+      /* Submenu (Experiences). Desktop: dropdown on hover/focus. Mobile: a
+         second panel the menu slides to (see the media query below). */
+      .has-sub { position: relative; }
+      .sub-chevron, .sub-back { display: none; }
+      .sub { position: absolute; top: calc(100% + 18px); left: -22px; min-width: 300px; padding: 4px 22px 12px; background: var(--ink); border-top: 2px solid var(--accent); box-shadow: 0 18px 40px rgb(0 0 0 / 0.28); display: none; opacity: 0; transform: translateY(-6px); transition: opacity 0.2s ease, transform 0.2s ease, display 0.2s allow-discrete; }
+      .sub::before { content: ''; position: absolute; left: 0; right: 0; bottom: 100%; height: 20px; } /* hover bridge */
+      .has-sub:hover > .sub, .has-sub:focus-within > .sub { display: block; opacity: 1; transform: none; }
+      @starting-style { .has-sub:hover > .sub, .has-sub:focus-within > .sub { opacity: 0; transform: translateY(-6px); } }
+      /* "See all" reads as a plain text link; the items match the main nav links. */
+      .menu .sub-all { display: inline-flex; align-items: center; gap: 6px; padding: 16px 0 10px; color: var(--accent); font: 600 15px/1.3 var(--font); text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 1px; text-transform: none; letter-spacing: 0; border-bottom: 0; }
+      .menu .sub-all:hover { color: #fff; }
+      .menu .sub-all .icon { transition: transform 0.2s ease; }
+      .menu .sub-all:hover .icon { transform: translateX(4px); }
+      .menu .sub ul { flex-direction: column; gap: 0; }
+      .menu .sub ul a { display: block; padding: 15px 0; border-bottom: 1px solid #26282c; }
+      .menu .sub ul a:hover, .menu .sub ul a[aria-current] { color: var(--accent); border-bottom-color: #26282c; }
       .menu-toggle { display: none; }
       @media (max-width: 960px) {
         .menu-toggle { display: block; margin-left: auto; }
@@ -126,9 +155,25 @@ const jsonLd = [organization(), ...(trail.length > 1 ? [breadcrumbList(trail)] :
         .menu ul { flex-direction: column; gap: 0; }
         .menu ul a { display: block; padding: 16px 0; font-size: 15px; border-bottom: 1px solid #26282c; }
         .menu .btn { margin-top: 18px; padding: 15px; }
+        .menu { max-height: calc(100dvh - 64px); overflow: hidden auto; }
+        /* Mobile submenu: tapping the trigger swaps the list for its panel. */
+        .menu .sub-trigger { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+        .sub-chevron { display: block; color: var(--accent); }
+        .has-sub { position: static; }
+        .sub, .has-sub:hover > .sub, .has-sub:focus-within > .sub { position: static; display: none; min-width: 0; padding: 0; background: none; border: 0; box-shadow: none; opacity: 1; transform: none; transition: none; }
+        .sub::before { display: none; }
+        .menu[data-sub] > ul > li:not([data-open]), .menu[data-sub] .sub-trigger { display: none; }
+        .menu[data-sub] li[data-open] > .sub { display: block; animation: sub-in 0.34s cubic-bezier(0.22, 1, 0.36, 1) both; }
+        .menu[data-from-sub] > ul { animation: sub-back 0.34s cubic-bezier(0.22, 1, 0.36, 1) both; }
+        .sub-back { display: flex; align-items: center; gap: 8px; width: 100%; padding: 16px 0; background: none; border: 0; border-bottom: 1px solid #26282c; color: #fff; cursor: pointer; font: 900 12px/1 var(--font); font-stretch: 125%; letter-spacing: 0.1em; text-transform: uppercase; }
+        .sub-back .icon { color: var(--accent); }
+        .menu .sub-all { padding: 18px 0; font-size: 16px; }
+        .menu .sub ul a { padding: 16px 0; }
         .util .tag { display: none; }
       }
       @media (min-width: 961px) { .menu-toggle { display: none !important; } }
+      @keyframes sub-in { from { opacity: 0; transform: translateX(36px); } }
+      @keyframes sub-back { from { opacity: 0; transform: translateX(-36px); } }
 
       /* Content */
       main { max-width: var(--wide); margin: 0 auto; padding: 28px var(--gutter) 64px; }
@@ -168,14 +213,11 @@ const jsonLd = [organization(), ...(trail.length > 1 ? [breadcrumbList(trail)] :
       .faq details:first-of-type { border-top: 1px solid var(--line); }
       .faq summary { cursor: pointer; list-style: none; display: flex; justify-content: space-between; gap: 16px; padding: 18px 0; font-weight: 700; color: var(--ink); }
       .faq summary::-webkit-details-marker { display: none; }
-      .faq__toggle { flex: none; color: var(--accent); transition: transform 0.2s ease; }
-      .faq details[open] .faq__toggle { transform: rotate(45deg); }
+      .faq__toggle { flex: none; color: var(--accent); transition: transform 0.45s cubic-bezier(0.45, 0, 0.25, 1); }
+      .faq details[open]:not([data-state="closing"]) .faq__toggle { transform: rotate(45deg); }
       .faq details p { margin: 0 0 20px; color: var(--muted); }
-      /* Accordion animation: height to/from auto, CSS only. Browsers without
-         ::details-content / interpolate-size just open instantly. */
-      :root { interpolate-size: allow-keywords; }
-      .faq details::details-content { block-size: 0; overflow: hidden; opacity: 0; transition: block-size 0.35s cubic-bezier(0.2, 0.7, 0.2, 1), opacity 0.3s ease, content-visibility 0.35s allow-discrete; }
-      .faq details[open]::details-content { block-size: auto; opacity: 1; }
+      /* Accordion height is animated in JS (see the script at the end of <body>),
+         because CSS height:auto transitions only work in Chromium. */
       .faq summary strong { transition: color 0.15s; }
       .faq summary:hover strong { color: var(--accent); }
 
@@ -188,21 +230,15 @@ const jsonLd = [organization(), ...(trail.length > 1 ? [breadcrumbList(trail)] :
       .site-footer nav { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px 24px; margin: 28px 0 36px; }
       .site-footer a { color: #e6e7ea; text-decoration: none; }
       .site-footer a:hover { color: #fff; text-decoration: underline; }
+      .site-footer .contact { display: flex; flex-wrap: wrap; gap: 8px 24px; margin: 16px 0 0; }
+      .site-footer .contact a { display: inline-flex; align-items: center; gap: 8px; }
       .site-footer .legal { border-top: 1px solid #26282c; padding-top: 20px; margin: 0; font-size: 13px; }
 
       .todo { background: #fff4cc; color: #1d1d1b; padding: 2px 6px; }
       /* Placeholders are visible in `npm run dev` only, never on the live site. */
       body:not(.dev) .todo { display: none; }
-      /* Page transitions: native cross-document View Transitions (no JS).
-         Header stays put; the page slides up and fades in.
-         Unsupported browsers simply navigate as usual. */
-      @view-transition { navigation: auto; }
-      .site-header { view-transition-name: site-header; }
-      .util { view-transition-name: util-bar; }
-      ::view-transition-old(root) { animation: vt-out 0.18s ease-in both; }
-      ::view-transition-new(root) { animation: vt-in 0.32s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
-      @keyframes vt-out { to { opacity: 0; } }
-      @keyframes vt-in { from { opacity: 0; transform: translateY(14px); } }
+      /* Page transitions: Astro <ClientRouter /> whole-page crossfade, header
+         included (see pageAnim in frontmatter). */
 
       @media (prefers-reduced-motion: reduce) {
         *, *::before, *::after { transition: none !important; }
@@ -232,7 +268,26 @@ const jsonLd = [organization(), ...(trail.length > 1 ? [breadcrumbList(trail)] :
         <details class="menu-toggle"><summary>{t.menu}<Icon name="menu" size="22px" class="i-open" /><Icon name="xmark" size="22px" class="i-close" /></summary></details>
         <nav class="menu" aria-label="Main">
           <ul>
-            {nav.map((n) => <li><a href={n.data.path} aria-current={d.path === n.data.path ? 'page' : d.path.startsWith(n.data.path) ? 'true' : undefined}>{n.data.navLabel ?? n.data.title}</a></li>)}
+            {nav.map((n) => {
+              const label = n.data.navLabel ?? n.data.title;
+              const sub = subNav[n.data.translationKey];
+              if (!sub?.length) return <li><a href={n.data.path} aria-current={current(n)}>{label}</a></li>;
+              const id = `sub-${n.data.translationKey}`;
+              return (
+                <li class="has-sub">
+                  <a href={n.data.path} aria-current={current(n)} class="sub-trigger" aria-controls={id}>
+                    {label}<Icon name="nav-arrow-right" size="20px" class="sub-chevron" />
+                  </a>
+                  <div class="sub" id={id}>
+                    <button type="button" class="sub-back"><Icon name="nav-arrow-left" size="20px" />{t.back}</button>
+                    <ul>
+                      {sub.map((s) => <li><a href={s.data.path} aria-current={d.path === s.data.path ? 'page' : undefined}>{s.data.navLabel ?? s.data.title}</a></li>)}
+                    </ul>
+                    <a class="sub-all" href={n.data.path}>{t.seeAllExperiences}<Icon name="arrow-right" size="18px" /></a>
+                  </div>
+                </li>
+              );
+            })}
           </ul>
           <a class="btn" href={bookUrl} rel="noopener" target="_blank">{t.book}</a>
         </nav>
@@ -260,9 +315,91 @@ const jsonLd = [organization(), ...(trail.length > 1 ? [breadcrumbList(trail)] :
           {site.name}
         </a>
         <div>{site.tagline}</div>
+        <p class="contact">
+          {site.email && <a href={`mailto:${site.email}`}><Icon name="mail" size="18px" />{t.contactEmail}: {site.email}</a>}
+          {phone && <a href={`tel:${phone}`}><Icon name="phone" size="18px" />{site.phone}</a>}
+          {whatsapp && <a href={`https://wa.me/${whatsapp}`} rel="noopener">WhatsApp</a>}
+        </p>
         <nav aria-label="Footer">{footer.map((n) => <a href={n.data.path}>{n.data.navLabel ?? n.data.title}</a>)}</nav>
         <p class="legal">© {new Date().getFullYear()} {site.name} · {site.address.locality}, Tenerife</p>
       </div>
     </footer>
+    <script>
+      // Mobile submenu: tapping "Experiences" slides to its panel instead of
+      // navigating (without JS, or on desktop, the link works as usual).
+      const mobile = matchMedia('(max-width: 960px)');
+      const resetMenu = (menu: HTMLElement) => {
+        delete menu.dataset.sub;
+        menu.querySelectorAll<HTMLElement>('li[data-open]').forEach((li) => delete li.dataset.open);
+        menu.querySelectorAll('.sub-trigger').forEach((a) => a.setAttribute('aria-expanded', 'false'));
+      };
+      document.addEventListener('click', (e) => {
+        const target = e.target as Element;
+        const menu = target.closest?.<HTMLElement>('.menu');
+        if (!menu) return;
+        const trigger = target.closest('.sub-trigger');
+        if (trigger && mobile.matches) {
+          e.preventDefault();
+          const li = trigger.parentElement as HTMLElement;
+          li.dataset.open = '';
+          menu.dataset.sub = '';
+          delete menu.dataset.fromSub;
+          trigger.setAttribute('aria-expanded', 'true');
+          menu.scrollTop = 0;
+          li.querySelector<HTMLElement>('.sub-back')?.focus();
+        } else if (target.closest('.sub-back')) {
+          const li = target.closest<HTMLElement>('li[data-open]');
+          resetMenu(menu);
+          menu.dataset.fromSub = '';
+          li?.querySelector<HTMLElement>('.sub-trigger')?.focus();
+        }
+      }, true); // capture: run before Astro's router, which skips prevented clicks
+      document.addEventListener('animationend', (e) => {
+        const el = e.target as Element;
+        if (el.matches?.('.menu > ul')) delete (el.parentElement as HTMLElement).dataset.fromSub;
+      });
+      // Reopening the menu always starts at the top level.
+      document.addEventListener('toggle', (e) => {
+        const el = e.target as Element;
+        if (el.matches?.('.menu-toggle')) {
+          const menu = el.nextElementSibling as HTMLElement;
+          resetMenu(menu);
+          delete menu.dataset.fromSub;
+        }
+      }, true);
+
+      // FAQ accordion: animate the real pixel height so the panel unrolls
+      // smoothly in every browser. One delegated listener survives page swaps.
+      type Acc = HTMLDetailsElement & { _h?: Animation; _f?: Animation };
+      const DUR = 450;
+      const EASE = 'cubic-bezier(0.45, 0, 0.25, 1)';
+      document.addEventListener('click', (e) => {
+        const summary = (e.target as Element).closest?.('.faq summary');
+        if (!summary || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        e.preventDefault();
+        const el = summary.parentElement as Acc;
+        const body = summary.nextElementSibling;
+        const from = el.offsetHeight;
+        el._h?.cancel();
+        el._f?.cancel();
+        const opening = !el.open || el.dataset.state === 'closing';
+        el.dataset.state = opening ? 'opening' : 'closing';
+        el.open = true;
+        const full = el.offsetHeight;
+        const to = opening ? full : summary.getBoundingClientRect().height + el.offsetHeight - el.clientHeight;
+        el.style.overflow = 'hidden';
+        el._h = el.animate({ height: [`${from}px`, `${to}px`] }, { duration: DUR, easing: EASE });
+        el._f = body?.animate(
+          { opacity: opening ? [0, 1] : [1, 0], transform: opening ? ['translateY(-8px)', 'none'] : ['none', 'translateY(-8px)'] },
+          { duration: DUR, easing: EASE, fill: 'forwards' },
+        );
+        el._h.onfinish = () => {
+          if (!opening) el.open = false;
+          el._f?.cancel();
+          el.style.overflow = '';
+          delete el.dataset.state;
+        };
+      });
+    </script>
   </body>
 </html>
