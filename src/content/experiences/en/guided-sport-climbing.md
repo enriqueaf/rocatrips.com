@@ -9,7 +9,7 @@ description: Climb Tenerife's best bolted sport routes with a local guide. For c
 summary: A guided day on Tenerife's best sport routes for people who already climb. Your guide picks the crags and routes for your level and the conditions, so you spend the day climbing, not searching for topos and parking.
 groupSize: Max 2 climbers per guide
 level: intermediate
-duration: Half day (about 4 hours) or full day (about 7 hours)
+duration: Half day (about 4 hours) or full day (about 6½ hours, including the approach)
 season: All year (crag chosen by sun, shade and wind)
 meetingPoint: Sent after booking, depending on the crag
 requirements:

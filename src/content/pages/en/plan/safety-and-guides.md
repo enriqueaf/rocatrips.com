@@ -14,7 +14,7 @@ Climbing is an adventure sport with real risks. We manage those risks the way pr
 
 ## Our standards
 
-- **Qualified, experienced guides.** Our lead guide, Pablo Vicens, is a Técnico Deportivo Superior en Escalada (TD3), the highest level of Spain's official climbing-guide qualification. He has more than ten years of professional guiding experience and knows each crag's conditions, bolting and loose sections.
+- **Qualified, experienced guides.** Our lead guide, Pablo Vicens, is a Técnico Deportivo Superior en Escalada (TD3), the highest level of Spain's official climbing-guide qualification. He has 12 years of professional guiding experience and knows each crag's conditions, bolting and loose sections.
 - **Redundant systems.** Every anchor has a backup, and beginners climb on top-rope, so the rope is always anchored above them.
 - **Two climbers per guide, maximum**, so every belay and knot is checked by the guide.
 - **Equipment** is inspected regularly and retired on schedule. Helmets are mandatory.
@@ -24,7 +24,7 @@ Climbing is an adventure sport with real risks. We manage those risks the way pr
 
 ## Our answers to the questions you should ask any guide
 
-- **Guide qualifications.** Pablo Vicens holds Spain's Técnico Deportivo Superior en Escalada (TD3), the highest level of the official climbing-guide qualification, and a current first-aid certificate. He has guided professionally for more than ten years in Tenerife and mainland Spain.
+- **Guide qualifications.** Pablo Vicens holds Spain's Técnico Deportivo Superior en Escalada (TD3), the highest level of the official climbing-guide qualification, and a current first-aid certificate. He has guided professionally for 12 years in Tenerife and mainland Spain.
 - **Active-tourism registration.** Rocatrips is a registered active-tourism company in the Canary Islands.
 - **Insurance.** We hold up-to-date civil liability and accident insurance.
 - **Climbers per guide.** Never more than two, on every experience.

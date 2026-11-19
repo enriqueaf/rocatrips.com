@@ -184,6 +184,7 @@ const jsonLd = [organization(), ...(trail.length > 1 ? [breadcrumbList(trail)] :
       .prose ul { padding-left: 1.2em; }
       .prose li { margin: 6px 0; }
       .prose li::marker { color: var(--accent); }
+      .prose p > img:only-child { width: min(100%, 320px); }
       .prose strong { color: var(--ink); }
       /* Tables: the <table> itself is the scroll box (display: block), so wide
          tables scroll sideways on phones; on desktop they may run wider than

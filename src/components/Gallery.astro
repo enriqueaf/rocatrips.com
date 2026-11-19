@@ -1,0 +1,30 @@
+---
+// Photo grid for area pages and /gallery/. Photos keep their own aspect ratio
+// (CSS columns), so portrait and landscape shots mix without cropping.
+import { Image } from 'astro:assets';
+import { photo } from '../lib/images';
+
+interface Props {
+  names: string[];
+  heading?: string;
+}
+const { names, heading } = Astro.props;
+const pics = names.map(photo);
+---
+
+<section class="gallery">
+  {heading && <h2>{heading}</h2>}
+  <ul class:list={['gallery__grid', { 'gallery__grid--few': pics.length < 3 }]}>
+    {pics.map((p) => (
+      <li><Image src={p.src} alt={p.alt} widths={[400, 640, 960]} sizes="(max-width: 640px) 100vw, (max-width: 1000px) 50vw, 33vw" /></li>
+    ))}
+  </ul>
+</section>
+
+<style>
+  .gallery { margin: 40px 0; }
+  .gallery__grid { columns: 3 260px; column-gap: 12px; padding: 0; margin: 0; list-style: none; }
+  .gallery__grid--few { columns: 2 260px; }
+  .gallery li { break-inside: avoid; margin: 0 0 12px; background: var(--ink); }
+  .gallery img { display: block; width: 100%; height: auto; }
+</style>
