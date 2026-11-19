@@ -25,7 +25,7 @@ const pages = defineCollection({
     ...base,
     // Which listing (if any) the page renders under its body.
     summary: z.string().optional(), // optional lead paragraph shown under the h1
-    template: z.enum(['home', 'experiences-hub', 'areas-hub', 'plan-hub', 'guides-hub', 'basic']).default('basic'),
+    template: z.enum(['home', 'experiences-hub', 'areas-hub', 'plan-hub', 'basic']).default('basic'),
     cta: z.boolean().default(true), // show the "climb with Rocatrips" block
     image: z.string().optional(), // photo name in src/assets/photos (see src/lib/images.ts)
     // Home-style visual sections. Also emitted in the Markdown twin, so keep the
