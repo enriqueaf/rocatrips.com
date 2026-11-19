@@ -11,10 +11,11 @@ import Banner from '../components/Banner.astro';
 import Stats from '../components/Stats.astro';
 import Tiles from '../components/Tiles.astro';
 import Reasons from '../components/Reasons.astro';
+import Gallery from '../components/Gallery.astro';
 import { Image } from 'astro:assets';
 import Icon from '../components/Icon.astro';
 import { askUsLink } from '../lib/contact';
-import { photoFor, photo } from '../lib/images';
+import { photoFor, photo, areaPhotos, galleryPhotos } from '../lib/images';
 import { allEntries, byKey, listing, bookingUrl, type AnyEntry } from '../lib/routes';
 import { forEntry } from '../lib/schema';
 import { site } from '../site.config';
@@ -69,7 +70,8 @@ const section = (id: string) => page?.sections.find((s) => s.id === id);
 const tenerife = section('tenerife');
 const whyUs = section('why-us');
 const ask = isHome ? await askUsLink(lang) : undefined;
-const promoPic = photo('taganana-light');
+const promoPic = photo('gorge-belayer-blue-sky');
+const galleryNames = d.translationKey === 'gallery' ? galleryPhotos : (areaPhotos[d.translationKey] ?? []);
 
 // Fact grids: [Iconoir icon, label, value]; empty values are skipped.
 type Fact = [string, string, string | undefined | null];
@@ -127,6 +129,7 @@ const eyebrow = exp ? `${levelLabels[lang][exp.level]} · ${exp.duration}` : are
 
 
     <div class:list={['prose', { 'home-intro': isHome }]}><Content /></div>
+    {galleryNames.length > 0 && <Gallery names={galleryNames} heading={area ? t.photos : undefined} />}
 
     {exp && (exp.requirements.length > 0 || exp.includes.length > 0 || exp.bring.length > 0) && (
       <div class="lists">
@@ -161,7 +164,7 @@ const eyebrow = exp ? `${levelLabels[lang][exp.level]} · ${exp.duration}` : are
       </ul>
     )}
     {tenerife && <Tiles heading={tenerife.heading} items={tenerife.items} />}
-    {whyUs && <Reasons heading={whyUs.heading} items={whyUs.items} link={whyUs.link} photo={photo('anaga-valley')} />}
+    {whyUs && <Reasons heading={whyUs.heading} items={whyUs.items} link={whyUs.link} photo={photo('pablo-vicens')} />}
     {isHome && areasHub && (
       <Banner photo={photo('teide-roques-sunset')} title={t.bannerTitle} text={t.bannerText} href={areasHub.data.path} label={t.bannerButton} />
     )}

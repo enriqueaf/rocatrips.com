@@ -24,7 +24,7 @@ stats:
     label: Days a year of climbing
   - value: "2"
     label: Climbers max per guide
-  - value: "10+"
+  - value: "12"
     label: Years of professional guiding
 sections:
   - id: tenerife
@@ -46,7 +46,7 @@ sections:
     heading: Why climb with Rocatrips?
     items:
       - title: A top-qualified guide
-        text: Pablo Vicens, Técnico Deportivo Superior en Escalada (TD3), with more than ten years of professional guiding.
+        text: Pablo Vicens, Técnico Deportivo Superior en Escalada (TD3), with 12 years of experience training climbers outdoors.
         href: /about/
       - title: Two climbers per guide, max
         text: Your guide checks every knot and belay. Helmets on, fully insured.

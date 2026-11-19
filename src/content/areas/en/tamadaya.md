@@ -22,7 +22,7 @@ order: 2
 updated: 2026-11-17
 ---
 
-Tamadaya is where many people climb their first outdoor routes in Tenerife. The routes are short, well bolted and mostly in the easy grades, the base of the crag is comfortable, and it suits families and groups. That popularity means weekends can be crowded, sometimes with whole families and their dogs.
+Tamadaya is one of the best crags in Tenerife to start climbing, and it's where many people climb their first outdoor routes. There's a big concentration of accessible routes, so you can polish every detail safely and build up metres until you climb with ease. The routes are short, well bolted and mostly in the easy grades, the base of the crag is comfortable, and it suits families and groups. That popularity means weekends can be crowded, sometimes with whole families and their dogs.
 
 ## Who it's for
 

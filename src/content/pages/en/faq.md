@@ -35,7 +35,7 @@ faq:
   # ── Courses & progression ───────────────────────────────────────
   - group: Climbing courses
     q: What climbing courses can I take in Tenerife?
-    a: We offer indoor-to-outdoor transition, learn to lead on bolts, and safety skills (anchors, lowering off and abseiling), plus multi-pitch instruction on long routes. See our climbing courses page for details.
+    a: We offer indoor-to-outdoor transition, learn to lead on bolts, fall training and the mental game, plus multi-pitch instruction on long routes. Courses last 4 or 6 hours. See our climbing courses page for details.
   - group: Climbing courses
     q: I climb indoors. Do I need a course to climb outside?
     a: It's strongly recommended. Outdoor climbing adds skills you don't use in a gym, such as reading the rock, checking fixed gear, threading and lowering off, and dealing with loose rock. Our indoor-to-outdoor course covers all of this in a day.
@@ -44,7 +44,7 @@ faq:
     a: Most climbers who already top-rope and belay confidently can lead safely on easy bolted routes after a 1–2 day course, then build experience. Leading at your top-rope limit takes longer.
   - group: Climbing courses
     q: Will I be able to climb on my own after a course?
-    a: After our learn-to-lead and safety skills courses most people can climb independently on well-bolted single-pitch sport routes. We recommend starting well below your limit, and we give you a list of suitable crags.
+    a: After our learn-to-lead course most people can climb independently on well-bolted single-pitch sport routes. We recommend starting well below your limit, and we give you a list of suitable crags.
   - group: Climbing courses
     q: Do I get a certificate?
     a: Our courses are practical skills training rather than a formal qualification. If you need a certificate for a club or gym, ask us before booking.

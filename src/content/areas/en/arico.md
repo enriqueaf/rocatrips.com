@@ -32,6 +32,8 @@ faq:
 
 Arico is the heart of Tenerife climbing. The volcanic gorges (*barrancos*) around the village of Villa de Arico hold the island's largest concentration of bolted routes, almost all of them single pitch with a fixed lower-off. Approaches are short, the rock is sound volcanic tuff and basalt, and the village has everything a climber needs: a climbing shop, climbers' hostels and cafés within walking distance.
 
+The basalt here is wonderfully varied. Pockets, cracks, corners and slabs make Arico the ideal playground for your first contact with volcanic rock, and it's one of Tenerife's most iconic crags.
+
 ## Sectors
 
 The climbing is split into **Arico Arriba** (upper) and **Arico Abajo** (lower), each with many sub-sectors such as *Escuela* and *Peña del Lunes*. Routes in Arico Abajo are generally longer, and the hardest lines on the island are concentrated there. Arico Arriba has a high density of moderate routes, which makes it a great first stop.

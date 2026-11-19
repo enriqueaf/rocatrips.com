@@ -21,6 +21,7 @@ const ok = (v: unknown): v is string => typeof v === 'string' && v.trim() !== ''
 export function cleanBody(md = ''): string {
   return `${md}\n`
     .replace(/<!--[\s\S]*?-->/g, '')
+    .replace(/^!\[[^\]]*\]\([^)]*\)\s*$/gm, '') // images are local asset paths; drop them
     .replace(/<span class="todo">[\s\S]*?<\/span>/g, '')
     .replace(/<[^>]+>/g, '')
     .split('\n')

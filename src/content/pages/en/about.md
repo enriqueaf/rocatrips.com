@@ -16,7 +16,7 @@ We live and climb on the island. We know which walls get the morning shade in Ju
 
 ## Our story
 
-Rocatrips is led by Pablo Vicens, a professional climbing guide for more than ten years. His climbing has taken him from the granite walls of Yosemite to the remote mountains of Kyrgyzstan. As a guide he has worked in Tenerife and mainland Spain, and he returns to Tenerife every high season.
+Rocatrips is led by Pablo Vicens, a climbing guide with 12 years of experience training climbers and athletes outdoors. He loves adventure routes and big walls, and his climbing has taken him from Kyrgyzstan to Yosemite by way of Morocco. As a guide he has worked in Tenerife and mainland Spain, and he returns to Tenerife every high season.
 
 <p class="todo">TODO: the founding story in 2–3 sentences. When and why Rocatrips started, and what makes Tenerife special to Pablo (e.g. his first day in Arico). Add the founding year to site.config.ts → trust.foundedYear.</p>
 
@@ -35,12 +35,14 @@ We climb in Tenerife all year, and we guide in English and Spanish.
 
 ### Pablo Vicens, lead guide
 
+![Pablo Vicens, Rocatrips lead guide, on a big wall](../../../assets/photos/pablo-vicens.jpg)
+
 - **Técnico Deportivo Superior en Escalada (TD3)**, the highest level of Spain's official climbing-guide qualification
-- **More than ten years** as a professional climbing guide, in Tenerife and mainland Spain
-- **Adventure climbing** from Yosemite to Kyrgyzstan
+- **12 years** training climbers and athletes outdoors, in Tenerife and mainland Spain
+- **Adventure routes and big walls** from Kyrgyzstan to Yosemite, by way of Morocco
 - **Current first-aid certificate**
 
-<p class="todo">TODO: add a photo of Pablo, a favourite route in Tenerife and one personal line. Add a profile for any other guide.</p>
+<p class="todo">TODO: add Pablo's favourite route in Tenerife and one personal line. Add a profile for any other guide.</p>
 
 We never take more than two climbers per guide, we're a registered active-tourism company in the Canary Islands, and we hold civil liability and accident insurance. Read our [safety standards](/plan-your-trip/safety-and-guides/) and [what climbers say](/reviews/).
 

@@ -40,7 +40,8 @@ const { photo, title, lead, eyebrow, size = 'page', align = 'left' } = Astro.pro
   .hero { position: relative; display: grid; color: #fff; background: var(--ink); overflow: hidden; isolation: isolate; }
   .hero--full { min-height: min(88vh, 860px); }
   .hero--page { min-height: clamp(340px, 52vh, 520px); }
-  .hero :global(picture), .hero__img { position: absolute; inset: 0; width: 100%; height: 100%; }
+  /* z-index keeps the positioned <picture> wrapper behind the text, or it swallows clicks on the buttons. */
+  .hero :global(picture), .hero__img { position: absolute; inset: 0; width: 100%; height: 100%; z-index: -2; }
   .hero :global(img) { width: 100%; height: 100%; object-fit: cover; z-index: -2; }
   .hero::after {
     content: ''; position: absolute; inset: 0; z-index: -1;
