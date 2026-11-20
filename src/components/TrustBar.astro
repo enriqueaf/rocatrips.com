@@ -13,28 +13,39 @@ const years = t.guidingSince ? new Date().getFullYear() - t.guidingSince : null;
 
 const L = {
   en: {
+    aegm: (n: string) => `AEGM member no. ${n}`,
     qual: 'Técnico Deportivo Superior en Escalada (TD3)', years: (n: number) => `${n} years of professional guiding`,
     ratio: (n: number) => `Max ${n} climbers per guide`, insured: 'Liability and accident insurance',
     reg: 'Registered active-tourism company', firstAid: 'First-aid certified guide',
     guided: (n: string) => `${n} climbers guided`, aria: 'Why climb with Rocatrips',
   },
   es: {
+    aegm: (n: string) => `Miembro de la AEGM, socio nº ${n}`,
     qual: 'Técnico Deportivo Superior en Escalada (TD3)', years: (n: number) => `${n} años como guía profesional`,
     ratio: (n: number) => `Máximo ${n} escaladores por guía`, insured: 'Seguro de responsabilidad civil y de accidentes',
     reg: 'Empresa de turismo activo registrada', firstAid: 'Guía con titulación en primeros auxilios',
     guided: (n: string) => `${n} escaladores guiados`, aria: 'Por qué escalar con Rocatrips',
   },
   de: {
+    aegm: (n: string) => `AEGM-Mitglied Nr. ${n}`,
     qual: 'Staatlich geprüfter Kletterführer (TD3, Spanien)', years: (n: number) => `${n} Jahre Erfahrung als Kletterführer`,
     ratio: (n: number) => `Max. ${n} Kletterer pro Guide`, insured: 'Haftpflicht- und Unfallversicherung',
     reg: 'Registrierter Aktivtourismus-Anbieter', firstAid: 'Guide mit Erste-Hilfe-Zertifikat',
     guided: (n: string) => `${n} geführte Kletterer`, aria: 'Warum mit Rocatrips klettern',
+  },
+  fr: {
+    aegm: (n: string) => `Membre de l'AEGM nº ${n}`,
+    qual: "Guide d'escalade diplômé d'État espagnol (TD3)", years: (n: number) => `${n} ans de guidage professionnel`,
+    ratio: (n: number) => `${n} grimpeurs max. par guide`, insured: 'Assurance responsabilité civile et accidents',
+    reg: 'Entreprise de tourisme actif agréée', firstAid: 'Guide formé aux premiers secours',
+    guided: (n: string) => `${n} grimpeurs guidés`, aria: 'Pourquoi grimper avec Rocatrips',
   },
 }[lang];
 
 // [text, todo hint, Iconoir icon]: text is empty when the fact isn't confirmed yet.
 const items: [string, string, string][] = [
   [t.qualification ? L.qual : '', 'guide qualification', 'medal'],
+  [t.association?.memberNumber ? L.aegm(t.association.memberNumber) : '', 'guide association', 'user-badge-check'],
   [years ? L.years(years) : '', 'guiding since', 'calendar-check'],
   [t.maxClimbersPerGuide ? L.ratio(t.maxClimbersPerGuide) : '', 'climbers per guide', 'group'],
   [t.insured ? L.insured : '', 'insurance', 'shield-check'],

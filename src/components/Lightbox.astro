@@ -1,0 +1,346 @@
+---
+// Full-screen photo viewer for content photos only: the photo grids
+// (Gallery.astro, any `[data-lightbox]` list of `a[data-full]`) and images in the
+// Markdown body (`.prose img`). Decorative photos (hero, cards, banners) are not
+// affected.
+//
+// - Tap/click a photo: opens full screen on top of the page.
+// - Photos of the same grid (or the same body text) form a group: swipe left and
+//   right on mobile, arrows or ← → keys on desktop.
+// - Zoom: pinch or double-tap on touch screens, click or trackpad pinch on desktop;
+//   drag to move around a zoomed photo.
+// - Close: × button, Esc, or tap the dark background.
+//
+// The <dialog> is rendered on every page (labels in the page language); one
+// delegated script handles every page, so it survives ClientRouter page swaps.
+import Icon from './Icon.astro';
+import { ui, type Locale } from '../i18n';
+
+interface Props { lang: Locale }
+const t = ui[Astro.props.lang];
+---
+
+<dialog class="lb" id="lightbox" aria-label={t.viewPhoto} data-view-label={t.viewPhoto}>
+  <div class="lb__track"></div>
+  <p class="lb__count" aria-live="polite"></p>
+  <button class="lb__btn lb__close" type="button" aria-label={t.closePhoto}><Icon name="xmark" size="28px" /></button>
+  <button class="lb__btn lb__prev" type="button" aria-label={t.prevPhoto}><Icon name="nav-arrow-left" size="30px" /></button>
+  <button class="lb__btn lb__next" type="button" aria-label={t.nextPhoto}><Icon name="nav-arrow-right" size="30px" /></button>
+</dialog>
+
+<style is:global>
+  .prose img:not(a img) { cursor: zoom-in; }
+  .prose img:not(a img):focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+  html:has(.lb[open]) { overflow: hidden; }
+  .lb { position: fixed; inset: 0; width: 100vw; height: 100dvh; max-width: none; max-height: none; margin: 0; padding: 0; border: 0; background: #080808; color: #fff; overflow: hidden; }
+  .lb::backdrop { background: transparent; }
+  .lb[open] { animation: lb-in 0.25s ease; }
+  @keyframes lb-in { from { opacity: 0; } }
+  .lb__track { display: flex; width: 100%; height: 100%; overflow-x: auto; overflow-y: hidden; scroll-snap-type: x mandatory; overscroll-behavior: contain; scrollbar-width: none; outline: none; }
+  .lb__track::-webkit-scrollbar { display: none; }
+  .lb[data-zoomed] .lb__track { overflow: hidden; }
+  .lb__slide { flex: 0 0 100%; height: 100%; margin: 0; display: grid; place-items: center; overflow: hidden; scroll-snap-align: center; scroll-snap-stop: always; touch-action: pan-x; }
+  .lb[data-zoomed] .lb__slide { touch-action: none; }
+  .lb__slide img { display: block; max-width: 100vw; max-height: 100dvh; width: auto; height: auto; object-fit: contain; transform-origin: center; user-select: none; -webkit-user-select: none; -webkit-user-drag: none; -webkit-touch-callout: none; cursor: zoom-in; }
+  .lb__slide img.is-anim { transition: transform 0.25s ease; }
+  .lb[data-zoomed] .lb__slide img { cursor: grab; }
+  .lb[data-zoomed] .lb__slide img:active { cursor: grabbing; }
+  .lb__btn { position: absolute; display: grid; place-items: center; width: 48px; height: 48px; padding: 0; border: 0; border-radius: 50%; background: rgb(0 0 0 / 0.5); color: #fff; cursor: pointer; transition: background 0.15s, opacity 0.15s; }
+  .lb__btn:hover { background: rgb(0 0 0 / 0.8); }
+  .lb__btn:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+  .lb__btn:disabled { opacity: 0.25; cursor: default; }
+  .lb__btn[hidden] { display: none; }
+  .lb__close { top: max(12px, env(safe-area-inset-top)); right: max(12px, env(safe-area-inset-right)); }
+  .lb__prev, .lb__next { top: 50%; translate: 0 -50%; }
+  .lb__prev { left: max(16px, env(safe-area-inset-left)); }
+  .lb__next { right: max(16px, env(safe-area-inset-right)); }
+  .lb__count { position: absolute; top: max(12px, env(safe-area-inset-top)); left: max(16px, env(safe-area-inset-left)); margin: 0; padding: 0 14px; border-radius: 24px; background: rgb(0 0 0 / 0.5); font: 700 13px/36px var(--font); letter-spacing: 0.08em; pointer-events: none; }
+  .lb__count:empty { display: none; }
+  .lb[data-zoomed] .lb__prev, .lb[data-zoomed] .lb__next, .lb[data-zoomed] .lb__count { opacity: 0; pointer-events: none; }
+  /* Touch screens swipe; the arrows are only for mouse users. */
+  @media (hover: none) { .lb__prev, .lb__next { display: none; } }
+</style>
+
+<script>
+  type Item = { src: string; alt: string; thumb: string };
+  type Pt = { x: number; y: number };
+
+  const MAX = 4; // max zoom
+  const STEP = 2.5; // zoom on double-tap / click
+  const clamp = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v));
+
+  let box: HTMLDialogElement;
+  let track: HTMLElement;
+  let opener: HTMLElement | null = null;
+  let idx = 0;
+  let total = 0;
+  let s = 1, tx = 0, ty = 0;
+  const pts = new Map<number, Pt>();
+  let pinch: { d: number; s: number; tx: number; ty: number; m: Pt } | null = null;
+  let pan: { p: Pt; tx: number; ty: number } | null = null;
+  let down: Pt = { x: 0, y: 0 };
+  let moved = false;
+  let wasPinch = false;
+  let lastTap = 0;
+
+  const img = () => track.children[idx]?.querySelector('img') as HTMLImageElement | undefined;
+  const center = (): Pt => ({ x: track.clientWidth / 2, y: track.clientHeight / 2 });
+
+  /** Apply the current zoom/pan to the visible photo, keeping it inside the screen. */
+  function apply(anim = false) {
+    const el = img();
+    if (!el) return;
+    if (s <= 1.01) { s = 1; tx = 0; ty = 0; }
+    const mx = Math.max(0, (el.offsetWidth * s - track.clientWidth) / 2);
+    const my = Math.max(0, (el.offsetHeight * s - track.clientHeight) / 2);
+    tx = clamp(tx, -mx, mx);
+    ty = clamp(ty, -my, my);
+    el.classList.toggle('is-anim', anim);
+    el.style.transform = s === 1 ? '' : `translate(${tx}px, ${ty}px) scale(${s})`;
+    box.toggleAttribute('data-zoomed', s > 1);
+  }
+
+  /** Zoom to `next`, keeping the screen point `m` over the same spot of the photo. */
+  function zoomAt(m: Pt, next: number, from = { s, tx, ty }, anchor = m, anim = false) {
+    const c = center();
+    const px = (anchor.x - c.x - from.tx) / from.s;
+    const py = (anchor.y - c.y - from.ty) / from.s;
+    s = clamp(next, 1, MAX);
+    tx = m.x - c.x - px * s;
+    ty = m.y - c.y - py * s;
+    apply(anim);
+  }
+
+  function resetZoom(anim = false) {
+    s = 1; tx = 0; ty = 0;
+    apply(anim);
+  }
+
+  function update() {
+    box.querySelector('.lb__count')!.textContent = total > 1 ? `${idx + 1} / ${total}` : '';
+    const prev = box.querySelector<HTMLButtonElement>('.lb__prev')!;
+    const next = box.querySelector<HTMLButtonElement>('.lb__next')!;
+    prev.hidden = next.hidden = total < 2;
+    prev.disabled = idx === 0;
+    next.disabled = idx === total - 1;
+  }
+
+  function goTo(i: number, smooth = true) {
+    if (i < 0 || i >= total) return;
+    if (s > 1) resetZoom();
+    track.scrollTo({ left: i * track.clientWidth, behavior: smooth ? 'smooth' : 'instant' });
+  }
+
+  /** The group of photos an element belongs to, or null if it isn't a content photo. */
+  function groupFor(el: Element): { items: Item[]; index: number; opener: HTMLElement } | null {
+    const link = el.closest<HTMLAnchorElement>('[data-lightbox] a[data-full]');
+    if (link) {
+      const links = [...link.closest('[data-lightbox]')!.querySelectorAll<HTMLAnchorElement>('a[data-full]')];
+      return {
+        items: links.map((a) => {
+          const i = a.querySelector('img');
+          return { src: a.dataset.full!, alt: i?.alt ?? '', thumb: i?.currentSrc || i?.src || '' };
+        }),
+        index: links.indexOf(link),
+        opener: link,
+      };
+    }
+    const pic = el.closest<HTMLImageElement>('.prose img');
+    if (pic && !pic.closest('a')) {
+      const imgs = [...pic.closest('.prose')!.querySelectorAll<HTMLImageElement>('img')].filter((i) => !i.closest('a'));
+      return {
+        items: imgs.map((i) => ({ src: i.currentSrc || i.src, alt: i.alt, thumb: i.currentSrc || i.src })),
+        index: imgs.indexOf(pic),
+        opener: pic,
+      };
+    }
+    return null;
+  }
+
+  function open(group: NonNullable<ReturnType<typeof groupFor>>) {
+    box = document.getElementById('lightbox') as HTMLDialogElement;
+    if (!box) return;
+    track = box.querySelector('.lb__track')!;
+    if (!box.dataset.ready) bind();
+    opener = group.opener;
+    total = group.items.length;
+    idx = group.index;
+    s = 1; tx = 0; ty = 0;
+    track.replaceChildren(
+      ...group.items.map((it, i) => {
+        const fig = document.createElement('figure');
+        fig.className = 'lb__slide';
+        const im = document.createElement('img');
+        im.alt = it.alt;
+        im.decoding = 'async';
+        im.draggable = false;
+        if (Math.abs(i - idx) > 1) im.loading = 'lazy';
+        // Show the already-loaded thumbnail until the large file arrives.
+        if (it.thumb && it.thumb !== it.src) {
+          im.src = it.thumb;
+          const full = new Image();
+          full.onload = () => { im.src = it.src; };
+          if (Math.abs(i - idx) <= 1) full.src = it.src;
+          else im.dataset.full = it.src;
+        } else im.src = it.src;
+        fig.append(im);
+        return fig;
+      }),
+    );
+    box.showModal();
+    track.scrollLeft = idx * track.clientWidth;
+    update();
+    loadNear();
+  }
+
+  /** Start loading the large files of the photos next to the visible one. */
+  function loadNear() {
+    for (const i of [idx - 1, idx, idx + 1]) {
+      const im = track.children[i]?.querySelector('img');
+      const src = im?.dataset.full;
+      if (!im || !src) continue;
+      delete im.dataset.full;
+      im.loading = 'eager';
+      const full = new Image();
+      full.onload = () => { im.src = src; };
+      full.src = src;
+    }
+  }
+
+  function bind() {
+    box.dataset.ready = '';
+    box.querySelector('.lb__close')!.addEventListener('click', () => box.close());
+    box.querySelector('.lb__prev')!.addEventListener('click', () => goTo(idx - 1));
+    box.querySelector('.lb__next')!.addEventListener('click', () => goTo(idx + 1));
+    box.addEventListener('close', () => {
+      track.replaceChildren();
+      box.removeAttribute('data-zoomed');
+      pts.clear();
+      pinch = pan = null;
+      opener?.focus({ preventScroll: true });
+    });
+    box.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight') { e.preventDefault(); goTo(idx + 1); }
+      else if (e.key === 'ArrowLeft') { e.preventDefault(); goTo(idx - 1); }
+    });
+    // Keep Safari from zooming the whole page instead of the photo.
+    box.addEventListener('gesturestart', (e) => e.preventDefault());
+
+    let raf = 0;
+    track.addEventListener('scroll', () => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        const i = clamp(Math.round(track.scrollLeft / track.clientWidth), 0, total - 1);
+        if (i === idx) return;
+        if (s > 1) resetZoom();
+        idx = i;
+        update();
+        loadNear();
+      });
+    });
+    addEventListener('resize', () => {
+      if (!box.open) return;
+      track.scrollLeft = idx * track.clientWidth;
+      apply();
+    });
+
+    // Trackpad pinch (ctrl + wheel) and ctrl/⌘ + mouse wheel zoom.
+    track.addEventListener('wheel', (e) => {
+      if (!e.ctrlKey && !e.metaKey) return;
+      e.preventDefault();
+      zoomAt({ x: e.clientX, y: e.clientY }, s * Math.exp(-e.deltaY * 0.01));
+    }, { passive: false });
+
+    track.addEventListener('pointerdown', (e) => {
+      const p = { x: e.clientX, y: e.clientY };
+      pts.set(e.pointerId, p);
+      if (pts.size === 1) { down = p; moved = false; wasPinch = false; }
+      if (pts.size === 2) {
+        const [a, b] = [...pts.values()];
+        pinch = { d: Math.hypot(a.x - b.x, a.y - b.y) || 1, s, tx, ty, m: { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 } };
+        pan = null;
+        wasPinch = true;
+        track.setPointerCapture(e.pointerId);
+      } else if (pts.size === 1 && s > 1) {
+        pan = { p, tx, ty };
+        track.setPointerCapture(e.pointerId);
+      }
+    });
+
+    track.addEventListener('pointermove', (e) => {
+      if (!pts.has(e.pointerId)) return;
+      const p = { x: e.clientX, y: e.clientY };
+      pts.set(e.pointerId, p);
+      if (Math.hypot(p.x - down.x, p.y - down.y) > 8) moved = true;
+      if (pinch && pts.size >= 2) {
+        const [a, b] = [...pts.values()];
+        const m = { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 };
+        zoomAt(m, pinch.s * (Math.hypot(a.x - b.x, a.y - b.y) / pinch.d), pinch, pinch.m);
+      } else if (pan) {
+        tx = pan.tx + p.x - pan.p.x;
+        ty = pan.ty + p.y - pan.p.y;
+        apply();
+      }
+    });
+
+    const end = (e: PointerEvent) => {
+      if (!pts.delete(e.pointerId)) return;
+      if (pts.size < 2) pinch = null;
+      if (pts.size === 1 && s > 1) {
+        const [p] = [...pts.values()];
+        pan = { p, tx, ty };
+      }
+      if (pts.size > 0) return;
+      pan = null;
+      if (e.type === 'pointercancel' || moved || wasPinch) return;
+
+      // A tap or click without moving.
+      const onImg = (e.target as Element).tagName === 'IMG';
+      const p = { x: e.clientX, y: e.clientY };
+      const toggle = () => (s > 1 ? resetZoom(true) : zoomAt(p, STEP, undefined, p, true));
+      if (e.pointerType === 'mouse') {
+        if (onImg || s > 1) toggle();
+        else box.close();
+        return;
+      }
+      const now = performance.now();
+      if (now - lastTap < 300) { lastTap = 0; toggle(); return; }
+      lastTap = now;
+      // Single tap on the dark background closes (wait to rule out a double-tap).
+      if (!onImg && s === 1) setTimeout(() => { if (lastTap === now && box.open) box.close(); }, 300);
+    };
+    track.addEventListener('pointerup', end);
+    track.addEventListener('pointercancel', end);
+  }
+
+  // Open on click (capture phase: before Astro's router handles the link).
+  document.addEventListener('click', (e) => {
+    if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    const group = groupFor(e.target as Element);
+    if (!group) return;
+    e.preventDefault();
+    e.stopPropagation();
+    open(group);
+  }, true);
+
+  // Body images aren't links: make them reachable and openable from the keyboard.
+  document.addEventListener('keydown', (e) => {
+    if (e.key !== 'Enter' && e.key !== ' ') return;
+    const el = e.target as Element;
+    if (!el.matches?.('.prose img')) return;
+    const group = groupFor(el);
+    if (!group) return;
+    e.preventDefault();
+    open(group);
+  });
+  const prep = () => {
+    const label = document.getElementById('lightbox')?.dataset.viewLabel ?? '';
+    document.querySelectorAll<HTMLImageElement>('.prose img').forEach((i) => {
+      if (i.closest('a')) return;
+      i.tabIndex = 0;
+      i.setAttribute('role', 'button');
+      i.setAttribute('aria-label', `${label}: ${i.alt}`);
+    });
+  };
+  document.addEventListener('astro:page-load', prep);
+</script>

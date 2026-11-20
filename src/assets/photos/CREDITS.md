@@ -4,7 +4,7 @@
 `mountain-road-mist`, `natural-pool`) were supplied by Rocatrips. Confirm we hold
 the rights to publish each one (and any credit the photographer asks for).
 
-**Rocatrips climbing photos** (`arico-*`, `tamadaya-*`, `el-rio-*`, `gorge-*`,
+**Rocatrips climbing photos** (`arico-*`, `tamadaya-*`, `el-rio-*`, `gorge-*`, `taganana-multipitch-climber`, `multipitch-hanging-belay`, `beginner-lowering-off`, `family-kids-crag`,
 `pablo-vicens`) were supplied by Rocatrips (Google Doc "rocatrips.com fotos pablo",
 November 2026). The `gorge-*` set was not labelled with a crag in the doc.
 

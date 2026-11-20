@@ -5,7 +5,7 @@ import { z } from 'astro/zod';
 // Every routable entry carries its own URL (`path`) and a `translationKey` that
 // links the same page across languages (used for hreflang + language switcher).
 const base = {
-  lang: z.enum(['en', 'es', 'de']),
+  lang: z.enum(['en', 'es', 'de', 'fr']),
   path: z.string().regex(/^\/(.*\/)?$/, 'path must start and end with "/"'),
   translationKey: z.string(),
   title: z.string(), // <title> — primary keyword first, max ~60 chars
@@ -50,7 +50,7 @@ const experiences = defineCollection({
   schema: z.object({
     ...base,
     summary: z.string(), // 1–2 sentence direct answer, shown at top and in cards
-    level: z.enum(['beginner', 'intermediate', 'advanced', 'all']),
+    level: z.enum(['beginner', 'intermediate', 'advanced', 'intermediate-advanced', 'all']),
     duration: z.string(), // e.g. "4 hours"
     durationISO: z.string().optional(), // e.g. "PT4H" for schema.org
     priceFrom: z.number().nullable().default(null), // EUR per person; null = on request

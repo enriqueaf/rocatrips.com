@@ -10,6 +10,7 @@ summary: A guided day on Tenerife's best sport routes for people who already cli
 groupSize: Max 2 climbers per guide
 level: intermediate
 duration: Half day (about 4 hours) or full day (about 6½ hours, including the approach)
+priceFrom: 80
 season: All year (crag chosen by sun, shade and wind)
 meetingPoint: Sent after booking, depending on the crag
 requirements:

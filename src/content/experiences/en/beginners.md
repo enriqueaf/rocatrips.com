@@ -50,6 +50,8 @@ Most people arrive a little nervous and leave asking when they can come back. Yo
 
 **You're safe the whole time.** You climb on top-rope, so the rope is anchored above you and catches you straight away if you slip. Your guide fits your harness and helmet, checks every knot, and belays or supervises every climb.
 
+![Climber in a helmet being lowered from the top of a brown volcanic wall in a gorge with cacti](../../../assets/photos/beginner-lowering-off.jpg)
+
 ## What you'll do
 
 1. **Meet your guide** at the meeting point near the crag. We check your shoe size and fit your harness and helmet.
@@ -57,7 +59,7 @@ Most people arrive a little nervous and leave asking when they can come back. Yo
 3. **First climbs.** You climb easy, well-bolted routes on top-rope while your guide belays and coaches you on footwork.
 4. **Learn to belay** (optional). If you'd like to, you learn to belay a partner under the guide's supervision.
 5. **Harder routes.** As your confidence grows, you try a steeper or longer route.
-6. **Debrief.** We give you tips on where to climb next, plus indoor gyms and courses if you're hooked.
+6. **Debrief.** We give you tips on your technique and on where and how to keep climbing, plus the next courses to keep progressing if you're hooked.
 
 ## Who it's for
 

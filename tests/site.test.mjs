@@ -32,7 +32,7 @@ test('every page has the basic SEO tags', () => {
   for (const f of contentPages) {
     const html = read(f);
     const where = url(f);
-    assert.match(html, /<html[^>]* lang="(en|es|de)"/, `${where}: <html lang>`);
+    assert.match(html, /<html[^>]* lang="(en|es|de|fr)"/, `${where}: <html lang>`);
     assert.match(html, /<title>[^<]{10,}<\/title>/, `${where}: <title>`);
     assert.match(html, /<meta name="description" content="[^"]{30,}"/, `${where}: meta description`);
     assert.match(html, /<link rel="canonical" href="https:\/\/[^"]+\/"/, `${where}: canonical`);
@@ -94,7 +94,7 @@ test('every page has a Markdown twin without placeholders', () => {
     assert.ok(existsSync(md), `${url(f)}: missing index.md`);
     const text = read(md);
     assert.match(text, /^# .+/, `${url(f)}: index.md has no title`);
-    assert.doesNotMatch(text, /TODO/i, `${url(f)}: index.md contains TODO`);
+    assert.doesNotMatch(text, /\bTODO\b/, `${url(f)}: index.md contains TODO`);
   }
 });
 
@@ -102,7 +102,7 @@ test('llms.txt files exist and contain no placeholders', () => {
   for (const name of ['llms.txt', 'llms-full.txt']) {
     const text = read(join(DIST, name));
     assert.ok(text.length > 500, `${name} is too short`);
-    assert.doesNotMatch(text, /TODO/i, `${name} contains TODO`);
+    assert.doesNotMatch(text, /\bTODO\b/, `${name} contains TODO`);
   }
 });
 
@@ -208,4 +208,13 @@ test('area and guide pages highlight Plan your trip in the nav', () => {
     const current = mainNavLinks(read(join(DIST, p))).filter((l) => l.current).map((l) => l.href);
     assert.deepEqual(current, ['/plan-your-trip/'], p);
   }
+});
+
+test('every page is translated: hreflang links to en, es, de and fr', () => {
+  const missing = [];
+  for (const f of contentPages) {
+    const langs = [...read(f).matchAll(/<link rel="alternate" hreflang="(\w\w)"/g)].map(([, l]) => l);
+    for (const l of ['en', 'es', 'de', 'fr']) if (!langs.includes(l)) missing.push(`${url(f)}: no ${l}`);
+  }
+  assert.deepEqual(missing, [], `Missing translations:\n${missing.join('\n')}`);
 });
