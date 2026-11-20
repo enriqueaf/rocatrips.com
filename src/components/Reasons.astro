@@ -8,13 +8,21 @@ interface Props {
   photo: Photo;
   items: { title: string; text: string; href?: string }[];
   link?: { label: string; href: string };
+  /** Guide's association badge, overlaid on the photo. */
+  badge?: { title: string; text: string; href: string; logo: string };
 }
-const { heading, photo, items, link } = Astro.props;
+const { heading, photo, items, link, badge } = Astro.props;
 ---
 
 <section class="reasons bleed">
   <div class="reasons__media">
     <Image src={photo.src} alt={photo.alt} widths={[640, 1024, 1400]} sizes="(max-width: 900px) 100vw, 50vw" />
+    {badge && (
+      <a class="badge" href={badge.href} target="_blank" rel="noopener">
+        <img src={badge.logo} alt="AEGM" width="56" height="64" loading="lazy" />
+        <span><strong>{badge.title}</strong>{badge.text}</span>
+      </a>
+    )}
   </div>
   <div class="reasons__body">
     <h2>{heading}</h2>
@@ -37,6 +45,10 @@ const { heading, photo, items, link } = Astro.props;
   .reasons { display: grid; grid-template-columns: 1fr 1fr; background: var(--surface); margin-block: clamp(56px, 8vw, 104px); }
   .reasons__media { position: relative; min-height: 420px; }
   .reasons__media img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .badge { position: absolute; left: 20px; bottom: 20px; z-index: 1; display: flex; align-items: center; gap: 12px; max-width: calc(100% - 40px); padding: 10px 16px 10px 10px; background: rgb(255 255 255 / 0.94); color: var(--ink); text-decoration: none; box-shadow: 0 4px 20px rgb(0 0 0 / 0.18); }
+  .reasons__media .badge img { position: static; inset: auto; width: 56px; height: auto; flex: none; object-fit: contain; }
+  .badge span { display: grid; gap: 2px; font-size: 13px; line-height: 1.35; color: #3a3d42; }
+  .badge strong { font-size: 15px; color: #1d1d1b; }
   .reasons__body { padding: clamp(40px, 6vw, 88px) var(--gutter) clamp(40px, 6vw, 88px) clamp(32px, 5vw, 72px); max-width: 680px; }
   .reasons h2 { margin: 0 0 28px; }
   ol { list-style: none; padding: 0; margin: 0 0 32px; }

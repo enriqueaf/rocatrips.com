@@ -56,13 +56,13 @@ sections:
       - title: Everything included
         text: Gear, permits where needed, and a plan.
       - title: Plan your whole trip
-        text: Free guides to climbing areas, the best time to climb, permits and where to stay.
+        text: Practical info on the best time to climb, permits, getting here and where to stay.
         href: /plan-your-trip/
     link:
       label: Meet your guide
       href: /about/
 ---
 
-Rocatrips is a local climbing guide service in Tenerife. Your first outdoor climb, your first lead or the island's best multi-pitch: we pick the crag, bring the gear and keep you safe, all year round, on sunny volcanic rock.
+Rocatrips is a local climbing guide service in Tenerife. Your first outdoor climb, your first lead or the island's best multi-pitch: we pick the crag, bring the gear and keep you safe, all year round. Discover volcanic rock: basalt, with its pockets, cracks, corners and slabs, is a fascinating rock to start climbing on.
 
 ## Choose your experience

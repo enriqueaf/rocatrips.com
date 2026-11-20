@@ -4,7 +4,14 @@
 # Guides hub merged into Plan your trip (guide articles keep their URLs)
 /guides /plan-your-trip/ 301
 /guides/ /plan-your-trip/ 301
-# Re-enable when the Spanish/German home pages are published (draft: false);
-# until then /es/ and /de/ don't exist and these would redirect to a 404.
-# /es /es/ 301
-# /de /de/ 301
+# Language homes without the trailing slash
+/es /es/ 301
+/de /de/ 301
+/fr /fr/ 301
+# Translated guide folders have no hub of their own (same as /guides/)
+/es/guias /es/planifica-tu-viaje/ 301
+/es/guias/ /es/planifica-tu-viaje/ 301
+/de/ratgeber /de/reiseplanung/ 301
+/de/ratgeber/ /de/reiseplanung/ 301
+/fr/guides /fr/preparer-votre-voyage/ 301
+/fr/guides/ /fr/preparer-votre-voyage/ 301

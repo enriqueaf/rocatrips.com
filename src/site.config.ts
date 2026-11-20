@@ -25,10 +25,12 @@ export const site = {
   // Only fill in what you can prove. Empty values are hidden on the live site and
   // show as TODO in `npm run dev`.
   trust: {
-    foundedYear: null as number | null, // TODO: year Rocatrips the company was founded (emitted as foundingDate)
+    foundedYear: 2023 as number | null, // year Rocatrips started (emitted as foundingDate)
     guidingSince: 2014, // Pablo Vicens: 12 years as a professional climbing guide (as of 2026)
     leadGuide: 'Pablo Vicens',
     qualification: 'Técnico Deportivo Superior en Escalada (TD3)',
+    // Pablo Vicens is a member of the AEGM (Asociación Española de Guías de Montaña).
+    association: { name: 'AEGM', memberNumber: '1681', url: 'https://www.aegm.org/', logo: '/badges/aegm.png' },
     firstAid: true, // guide holds a current first-aid certificate
     maxClimbersPerGuide: 2,
     insured: true, // civil liability + accident insurance, up to date

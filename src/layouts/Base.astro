@@ -5,6 +5,7 @@ import { byKey, translations, breadcrumbs, listing, type AnyEntry } from '../lib
 import { organization, breadcrumbList } from '../lib/schema';
 import { mdPath } from '../lib/markdown';
 import Icon from '../components/Icon.astro';
+import Lightbox from '../components/Lightbox.astro';
 import { ClientRouter, fade } from 'astro:transitions';
 
 // Page transition (Astro ClientRouter): a plain opacity crossfade, no movement.
@@ -185,6 +186,10 @@ const jsonLd = [organization(), ...(trail.length > 1 ? [breadcrumbList(trail)] :
       .prose li { margin: 6px 0; }
       .prose li::marker { color: var(--accent); }
       .prose p > img:only-child { width: min(100%, 320px); }
+      .guide-badge { display: flex; align-items: center; gap: 12px; width: min(100%, 320px); margin: -8px 0 24px; padding: 10px 14px 10px 10px; background: var(--surface); border: 1px solid var(--line); color: var(--ink); text-decoration: none; }
+      .guide-badge img { width: 56px; height: auto; flex: none; }
+      .guide-badge span { display: grid; gap: 2px; font-size: 13px; line-height: 1.35; color: var(--muted); }
+      .guide-badge strong { font-size: 15px; color: var(--ink); }
       .prose strong { color: var(--ink); }
       /* Tables: the <table> itself is the scroll box (display: block), so wide
          tables scroll sideways on phones; on desktop they may run wider than
@@ -250,7 +255,7 @@ const jsonLd = [organization(), ...(trail.length > 1 ? [breadcrumbList(trail)] :
   <body class={import.meta.env.DEV ? 'dev' : undefined}>
     <div class="util">
       <div class="wrap">
-        <span class="tag">{site.tagline}</span>
+        <span class="tag">{t.tagline}</span>
         {alternates.length > 1 && (
           <nav aria-label="Language">
             {alternates.map((a) =>
@@ -315,7 +320,7 @@ const jsonLd = [organization(), ...(trail.length > 1 ? [breadcrumbList(trail)] :
           <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2 22 20H2Z" /><path fill="#0c0d0f" d="m12 9 4 7H8Z" /></svg>
           {site.name}
         </a>
-        <div>{site.tagline}</div>
+        <div>{t.tagline}</div>
         <p class="contact">
           {site.email && <a href={`mailto:${site.email}`}><Icon name="mail" size="18px" />{t.contactEmail}: {site.email}</a>}
           {phone && <a href={`tel:${phone}`}><Icon name="phone" size="18px" />{site.phone}</a>}
@@ -325,6 +330,7 @@ const jsonLd = [organization(), ...(trail.length > 1 ? [breadcrumbList(trail)] :
         <p class="legal">© {new Date().getFullYear()} {site.name} · {site.address.locality}, Tenerife</p>
       </div>
     </footer>
+    <Lightbox lang={lang} />
     <script>
       // Mobile submenu: tapping "Experiences" slides to its panel instead of
       // navigating (without JS, or on desktop, the link works as usual).

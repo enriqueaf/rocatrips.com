@@ -8,6 +8,7 @@ const greeting: Record<Locale, string> = {
   en: "Hi Rocatrips! I'd like to ask about climbing in Tenerife.",
   es: '¡Hola Rocatrips! Quería preguntar sobre escalar en Tenerife.',
   de: 'Hallo Rocatrips! Ich habe eine Frage zum Klettern auf Teneriffa.',
+  fr: "Bonjour Rocatrips ! J'ai une question sur l'escalade à Tenerife.",
 };
 
 export interface AskLink { href: string; external: boolean; }

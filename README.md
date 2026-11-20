@@ -22,17 +22,17 @@ Every page is a Markdown file in `src/content/`. A single route, `src/pages/[...
 
 ```
 src/content/
-  pages/{en,es,de}/        Home, hubs, plan-your-trip, about, faq, legal…
-  experiences/{en,es,de}/  Bookable offerings (one page each, linked to Kinecall)
-  areas/{en,es,de}/        Crag guides
-  guides/{en,es,de}/       Long-form articles
+  pages/{en,es,de,fr}/        Home, hubs, plan-your-trip, about, faq, legal…
+  experiences/{en,es,de,fr}/  Bookable offerings (one page each, linked to Kinecall)
+  areas/{en,es,de,fr}/        Crag guides
+  guides/{en,es,de,fr}/       Long-form articles
 src/site.config.ts         Business facts (name, contact, location, Kinecall URL)
 src/i18n.ts                Languages, UI strings, navigation
 src/content.config.ts      Fields each content type requires
 ```
 
 Key frontmatter fields:
-- `path`: the URL. English pages are at the root; others start with `/es/` or `/de/`. Translated slugs are encouraged (`/es/escalada-tenerife/`).
+- `path`: the URL. English pages are at the root; others start with `/es/`, `/de/` or `/fr/`. Translated slugs are encouraged (`/es/escalada-tenerife/`).
 - `translationKey`: the same value across languages links translations. It drives hreflang, the language switcher and navigation.
 - `title` / `description`: the SEO title (primary keyword first, ~60 chars) and meta description (≤170 chars).
 - `faq`: question and answer pairs, rendered on the page and emitted as FAQPage structured data.

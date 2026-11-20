@@ -14,7 +14,7 @@ export const abs = (path: string) => new URL(path, site.url).toString();
 /** URL of the Markdown version of a page. */
 export const mdPath = (path: string) => `${path}index.md`;
 
-const hasTodo = (v: unknown) => typeof v === 'string' && /TODO/i.test(v);
+const hasTodo = (v: unknown) => typeof v === 'string' && /\bTODO\b/.test(v);
 const ok = (v: unknown): v is string => typeof v === 'string' && v.trim() !== '' && !hasTodo(v);
 
 /** Clean a Markdown body for machine reading. */
@@ -25,7 +25,7 @@ export function cleanBody(md = ''): string {
     .replace(/<span class="todo">[\s\S]*?<\/span>/g, '')
     .replace(/<[^>]+>/g, '')
     .split('\n')
-    .filter((l) => !/TODO/i.test(l))
+    .filter((l) => !/\bTODO\b/.test(l))
     .join('\n')
     .replace(/\]\(\//g, `](${site.url}/`)
     .replace(/^(#{1,6} .+)\n+(?=#{1,6} |\s*(?![\s\S]))/gm, '') // drop headings left with no content (next is a heading or end of text)
@@ -40,7 +40,7 @@ function factLines(entry: AnyEntry): string[] {
   if (entry.collection === 'experiences') {
     const e = entry.data;
     facts.push(
-      [t.from, e.priceFrom != null ? `€${e.priceFrom} per person` : t.priceOnRequest],
+      [t.from, e.priceFrom != null ? `€${e.priceFrom} ${t.perPerson}` : t.priceOnRequest],
       [t.duration, e.duration],
       [t.level, levelLabels[lang][e.level]],
       [t.groupSize, e.groupSize],
@@ -50,21 +50,21 @@ function factLines(entry: AnyEntry): string[] {
       [t.requirements, e.requirements.filter(ok).join('; ')],
       [t.included, e.includes.filter(ok).join(', ')],
       [t.bring, e.bring.filter(ok).join(', ')],
-      ['Booking', e.kinecallUrl ?? site.kinecall.bookingUrl],
+      [t.booking, e.kinecallUrl ?? site.kinecall.bookingUrl],
     );
   }
   if (entry.collection === 'areas') {
     const a = entry.data;
     facts.push(
-      ['Region', a.region],
-      ['Routes', a.routes],
-      ['Grades', a.grades],
-      ['Style', a.style.join(', ')],
-      ['Approach', a.approach],
-      ['Altitude', a.altitude],
-      ['Aspect', a.aspect],
+      [t.region, a.region],
+      [t.routes, a.routes],
+      [t.grades, a.grades],
+      [t.style, a.style.join(', ')],
+      [t.approach, a.approach],
+      [t.altitude, a.altitude],
+      [t.aspect, a.aspect],
       [t.season, a.bestSeason],
-      [a.permit ? `Access (${t.permit})` : 'Access', a.access],
+      [a.permit ? `${t.access} (${t.permit})` : t.access, a.access],
       ['Coordinates', a.geo ? `${a.geo.lat}, ${a.geo.lng}` : undefined],
     );
   }
@@ -103,7 +103,7 @@ export async function entryToMarkdown(entry: AnyEntry, { level = 1 } = {}): Prom
   }
 
   if (entry.collection === 'areas' && entry.data.links.length) {
-    out.push(`${h(2)} Topos and references`, '', ...entry.data.links.map((l) => `- [${l.label}](${l.url})`), '');
+    out.push(`${h(2)} ${ui[lang].topos}`, '', ...entry.data.links.map((l) => `- [${l.label}](${l.url})`), '');
   }
 
   const faq = d.faq.filter((f) => ok(f.a) && ok(f.q));
@@ -132,7 +132,8 @@ export async function entryToMarkdown(entry: AnyEntry, { level = 1 } = {}): Prom
   // Same CTA as the HTML page, so AI answers built from this page point to us.
   if (entry.collection !== 'pages' || entry.data.cta) {
     const t = ui[lang];
-    out.push(`${h(2)} ${t.ctaTitle}`, '', `${t.ctaText} ${t.book}: ${site.kinecall.bookingUrl} · ${abs(lang === 'en' ? '/climbing-tenerife/' : `/${lang}/`)}`, '');
+    const hub = await byKey('experiences', lang);
+    out.push(`${h(2)} ${t.ctaTitle}`, '', `${t.ctaText} ${t.book}: ${site.kinecall.bookingUrl} · ${abs(hub?.data.path ?? '/climbing-tenerife/')}`, '');
   }
 
   return out.join('\n').replace(/\n{3,}/g, '\n\n').trim() + '\n';
