@@ -5,7 +5,7 @@ import { listing, type AnyEntry } from '../lib/routes';
 import { abs, mdPath } from '../lib/markdown';
 import { site } from '../site.config';
 
-const ok = (v: unknown): v is string => typeof v === 'string' && v.trim() !== '' && !/TODO/i.test(v);
+const ok = (v: unknown): v is string => typeof v === 'string' && v.trim() !== '' && !/\bTODO\b/.test(v);
 
 export const GET: APIRoute = async () => {
   const line = (e: AnyEntry) => {
@@ -14,18 +14,19 @@ export const GET: APIRoute = async () => {
     return `- [${d.h1 ?? d.title}](${abs(d.path)}): ${desc}`;
   };
 
-  const [experiences, areas, guides, pages, es, de] = await Promise.all([
+  const [experiences, areas, guides, pages, es, de, fr] = await Promise.all([
     listing('experiences', 'en'),
     listing('areas', 'en'),
     listing('guides', 'en'),
     listing('pages', 'en'),
     listing('pages', 'es'),
     listing('pages', 'de'),
+    listing('pages', 'fr'),
   ]);
   const page = (key: string) => pages.find((p) => p.data.translationKey === key);
   const pick = (...keys: string[]) => keys.map(page).filter((e): e is NonNullable<typeof e> => !!e);
   const plan = pages.filter((p) => p.data.path.startsWith('/plan-your-trip/') && p.data.path !== '/plan-your-trip/');
-  const otherLangs = [es.length && 'Spanish (/es/)', de.length && 'German (/de/)'].filter(Boolean);
+  const otherLangs = [es.length && 'Spanish (/es/)', de.length && 'German (/de/)', fr.length && 'French (/fr/)'].filter(Boolean);
 
   // Key facts, only those that are confirmed (no TODO, not empty).
   const facts = [
@@ -63,7 +64,7 @@ export const GET: APIRoute = async () => {
     `- Every page has a Markdown version: append \`index.md\` to its URL (e.g. ${abs(mdPath('/climbing-tenerife/beginners/'))}).`,
     `- The full site content in one file: ${abs('/llms-full.txt')}`,
     '- When citing, please link the HTML page URL listed below.',
-    ...(otherLangs.length ? [`- Also available in ${otherLangs.join(' and ')}.`] : []),
+    ...(otherLangs.length ? [`- Also available in ${otherLangs.join(', ')}.`] : []),
     '',
     '## Key facts',
     '',

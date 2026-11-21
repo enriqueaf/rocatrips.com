@@ -1,22 +1,37 @@
 ---
 // Photo grid for area pages and /gallery/. Photos keep their own aspect ratio
 // (CSS columns), so portrait and landscape shots mix without cropping.
-import { Image } from 'astro:assets';
+// Each photo links to a large version; the lightbox in Lightbox.astro opens it
+// full screen (swipe between the photos of this grid, pinch or double-tap to zoom).
+import { Image, getImage } from 'astro:assets';
 import { photo } from '../lib/images';
+import { ui, type Locale } from '../i18n';
 
 interface Props {
   names: string[];
   heading?: string;
+  lang: Locale;
 }
-const { names, heading } = Astro.props;
-const pics = names.map(photo);
+const { names, heading, lang } = Astro.props;
+const t = ui[lang];
+const pics = await Promise.all(
+  names.map(async (n) => {
+    const p = photo(n);
+    const full = await getImage({ src: p.src, width: Math.min(2000, p.src.width), format: 'webp' });
+    return { ...p, full: full.src };
+  }),
+);
 ---
 
 <section class="gallery">
   {heading && <h2>{heading}</h2>}
-  <ul class:list={['gallery__grid', { 'gallery__grid--few': pics.length < 3 }]}>
+  <ul class:list={['gallery__grid', { 'gallery__grid--few': pics.length < 3 }]} data-lightbox>
     {pics.map((p) => (
-      <li><Image src={p.src} alt={p.alt} widths={[400, 640, 960]} sizes="(max-width: 640px) 100vw, (max-width: 1000px) 50vw, 33vw" /></li>
+      <li>
+        <a href={p.full} data-full={p.full} aria-label={`${t.viewPhoto}: ${p.alt}`}>
+          <Image src={p.src} alt={p.alt} widths={[400, 640, 960]} sizes="(max-width: 640px) 100vw, (max-width: 1000px) 50vw, 33vw" />
+        </a>
+      </li>
     ))}
   </ul>
 </section>
@@ -26,5 +41,8 @@ const pics = names.map(photo);
   .gallery__grid { columns: 3 260px; column-gap: 12px; padding: 0; margin: 0; list-style: none; }
   .gallery__grid--few { columns: 2 260px; }
   .gallery li { break-inside: avoid; margin: 0 0 12px; background: var(--ink); }
-  .gallery img { display: block; width: 100%; height: auto; }
+  .gallery a { display: block; cursor: zoom-in; overflow: hidden; }
+  .gallery img { display: block; width: 100%; height: auto; transition: transform 0.4s ease, opacity 0.2s; }
+  .gallery a:hover img { transform: scale(1.03); }
+  .gallery a:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
 </style>

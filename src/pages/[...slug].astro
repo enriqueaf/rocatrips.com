@@ -87,15 +87,15 @@ const facts: Fact[] = exp
     ]
   : area
     ? [
-        ['position', 'Region', area.region],
-        ['path-arrow', 'Routes', area.routes],
-        ['stat-up', 'Grades', area.grades],
-        ['compass', 'Style', area.style.join(', ')],
-        ['trekking', 'Approach', area.approach],
-        ['triangle', 'Altitude', area.altitude],
-        ['sun-light', 'Aspect', area.aspect],
+        ['position', t.region, area.region],
+        ['path-arrow', t.routes, area.routes],
+        ['stat-up', t.grades, area.grades],
+        ['compass', t.style, area.style.join(', ')],
+        ['trekking', t.approach, area.approach],
+        ['triangle', t.altitude, area.altitude],
+        ['sun-light', t.aspect, area.aspect],
         ['calendar', t.season, area.bestSeason],
-        [area.permit ? 'warning-triangle' : 'shield-check', area.permit ? t.permit : 'Access', area.access],
+        [area.permit ? 'warning-triangle' : 'shield-check', area.permit ? t.permit : t.access, area.access],
       ]
     : [];
 const shownFacts = facts.filter(([, , v]) => v);
@@ -129,7 +129,7 @@ const eyebrow = exp ? `${levelLabels[lang][exp.level]} · ${exp.duration}` : are
 
 
     <div class:list={['prose', { 'home-intro': isHome }]}><Content /></div>
-    {galleryNames.length > 0 && <Gallery names={galleryNames} heading={area ? t.photos : undefined} />}
+    {galleryNames.length > 0 && <Gallery names={galleryNames} lang={lang} heading={area || exp ? t.photos : undefined} />}
 
     {exp && (exp.requirements.length > 0 || exp.includes.length > 0 || exp.bring.length > 0) && (
       <div class="lists">
@@ -139,10 +139,10 @@ const eyebrow = exp ? `${levelLabels[lang][exp.level]} · ${exp.duration}` : are
       </div>
     )}
     {exp && <p><a class="btn" href={bookUrl} rel="noopener" target="_blank">{t.book}</a></p>}
-    {linkedAreas.length > 0 && (<><h2>Where</h2><ul class="cards">{linkedAreas.map((e) => <Card entry={e} />)}</ul></>)}
+    {linkedAreas.length > 0 && (<><h2>{t.where}</h2><ul class="cards">{linkedAreas.map((e) => <Card entry={e} />)}</ul></>)}
 
     {area && area.links.length > 0 && (
-      <><h2>Topos & references</h2><ul class="prose">{area.links.map((l) => <li><a class="ext" href={l.url} rel="noopener">{l.label} <Icon name="open-new-window" size="16px" /></a></li>)}</ul></>
+      <><h2>{t.topos}</h2><ul class="prose">{area.links.map((l) => <li><a class="ext" href={l.url} rel="noopener">{l.label} <Icon name="open-new-window" size="16px" /></a></li>)}</ul></>
     )}
     {linkedExperiences.length > 0 && (<><h2>{t.climbHere}</h2><ul class="cards">{linkedExperiences.map((e) => <Card entry={e} />)}</ul></>)}
 
@@ -164,7 +164,7 @@ const eyebrow = exp ? `${levelLabels[lang][exp.level]} · ${exp.duration}` : are
       </ul>
     )}
     {tenerife && <Tiles heading={tenerife.heading} items={tenerife.items} />}
-    {whyUs && <Reasons heading={whyUs.heading} items={whyUs.items} link={whyUs.link} photo={photo('pablo-vicens')} />}
+    {whyUs && <Reasons heading={whyUs.heading} items={whyUs.items} link={whyUs.link} photo={photo('pablo-vicens')} badge={{ title: t.aegmTitle, text: `${t.aegmText} ${site.trust.association.memberNumber}`, href: site.trust.association.url, logo: site.trust.association.logo }} />}
     {isHome && areasHub && (
       <Banner photo={photo('teide-roques-sunset')} title={t.bannerTitle} text={t.bannerText} href={areasHub.data.path} label={t.bannerButton} />
     )}

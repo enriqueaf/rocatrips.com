@@ -9,8 +9,9 @@ description: A safe, fun outdoor climbing session in Tenerife for families with 
 summary: An outdoor climbing session built around families, with easy, short routes, games and a patient guide. All the gear is included, adults climb too, and it's a great active day out during a Tenerife holiday.
 groupSize: Max 2 climbers per guide
 level: beginner
-duration: About 3 hours
-durationISO: PT3H
+duration: About 4 hours
+priceFrom: 45
+durationISO: PT4H
 season: All year (mornings in summer)
 meetingPoint: Sent after booking (south of Tenerife)
 requirements:
