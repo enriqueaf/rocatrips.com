@@ -3,9 +3,10 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, readdirSync, existsSync, statSync } from 'node:fs';
-import { join, relative } from 'node:path';
+import { join, relative, sep } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-const DIST = new URL('../dist/', import.meta.url).pathname;
+const DIST = fileURLToPath(new URL('../dist/', import.meta.url));
 assert.ok(existsSync(join(DIST, 'index.html')), 'dist/ is missing: run `npm run build` first');
 
 const walk = (dir) =>
@@ -17,7 +18,7 @@ const files = walk(DIST);
 const pages = files.filter((f) => f.endsWith('.html'));
 const contentPages = pages.filter((f) => !f.endsWith('404.html'));
 const read = (f) => readFileSync(f, 'utf8');
-const url = (f) => '/' + relative(DIST, f).replace(/index\.html$/, '');
+const url = (f) => '/' + relative(DIST, f).split(sep).join('/').replace(/index\.html$/, '');
 
 /** Does a root-relative URL resolve to a file in dist/? */
 function resolves(href) {
@@ -200,7 +201,7 @@ test('Plan your trip hub lists areas, planning topics and guides', () => {
     assert.match(html, new RegExp(`<section[^>]*id="${id}"[^>]*>[\\s\\S]*?<ul class="cards"`), `#${id} section with cards`);
   assert.match(html, /href="\/climbing-areas\/"/, 'links to the crag table');
   assert.ok(!existsSync(join(DIST, 'guides/index.html')), '/guides/ hub removed');
-  assert.match(read(new URL('../public/_redirects', import.meta.url).pathname), /^\/guides\/ \/plan-your-trip\/ 301$/m);
+  assert.match(read(new URL('../public/_redirects', import.meta.url)), /^\/guides\/ \/plan-your-trip\/ 301$/m);
 });
 
 test('area and guide pages highlight Plan your trip in the nav', () => {
